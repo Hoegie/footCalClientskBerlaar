@@ -33,8 +33,7 @@ var mailpassword = sourcefile.mailpassword;
 //set database connection parameters
 //*************************************************************************
 var connection = mysql.createConnection({
-  host     : 'degronckel.synology.me', 
-  //host     : '192.168.25.7',
+  host     : '127.0.0.1',
   user     : 'root',
   password : 'Hoegaarden',
   database : dbname
