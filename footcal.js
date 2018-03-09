@@ -3289,8 +3289,8 @@ app.post("/image/upload",function(req,res){
 
 var form = new formidable.IncomingForm();
 var fileNameImage = "";
-form.uploadDir = '/Applications/MAMP/htdocs/skberlaar/images/';
-//form.uploadDir = '/var/www/html/' + apachedir;
+//form.uploadDir = '/Applications/MAMP/htdocs/skberlaar/images/';
+form.uploadDir = '/var/www/html/' + apachedir + "/images/";
 
 form.parse(req,function(err, fields, files){
   console.log(fields);
