@@ -3296,7 +3296,7 @@ form.parse(req,function(err, fields, files){
   console.log("filename : ");
   console.log(fields.picURL);
   fileNameImage = fields.picURL;
-  fileNameImage = fileNameImage + '.png';
+  //fileNameImage = fileNameImage + '.png';
   fs.rename(files.file.path, path.join(form.uploadDir, fileNameImage), function(err){
 
   });
