@@ -3334,8 +3334,8 @@ fs.writeFile("/Applications/MAMP/htdocs/skberlaar/images/testandroid.jpg", image
 app.post("/image/delete",function(req,res){
 
 var imageName = req.body.imagename;
-//var fullImageName = '/var/www/html/' + apachedir + '/' + imageName;
-var fullImageName = '/Applications/MAMP/htdocs/skberlaar/images/' + imageName
+var fullImageName = '/var/www/html/' + apachedir + '/images/' + imageName;
+//var fullImageName = '/Applications/MAMP/htdocs/skberlaar/images/' + imageName
 
 fs.unlink(fullImageName, function(error){
 
