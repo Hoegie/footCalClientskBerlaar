@@ -1,5 +1,6 @@
 var http = require('http');
 var https = require('https');
+var fs = require('fs');
 var sourcefile = require('./footcal.js');
 var app = sourcefile.exportapp;
 
