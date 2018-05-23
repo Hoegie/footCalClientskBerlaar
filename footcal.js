@@ -923,9 +923,8 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
                   var dt = dateTime.create();
                   var formatted = dt.format('d_m_Y_H_M_S');
 
-                  //var fileName = 'gamereports/' + teamnameDB + '_' + formatted + '.html';
-                  
-                  var fileName = '/Applications/MAMP/htdocs/skberlaar/gamereports/' + teamnameDB + '_' + formatted + '.html';   
+                  var fileName = '/var/www/html/' + apachedir + '/gamereports/' + teamnameDB + '_' + formatted + '.html';
+                  //var fileName = '/Applications/MAMP/htdocs/skberlaar/gamereports/' + teamnameDB + '_' + formatted + '.html';   
 
                   fileName = fileName.replace(" ", "_"); 
 
@@ -3322,7 +3321,7 @@ console.log(req.body.photo);
 //res.end(JSON.stringify("success"));
 
 var imageBuffer = new Buffer(req.body.photo, 'base64');
-fs.writeFile("/Applications/MAMP/htdocs/skberlaar/images/testandroid.jpg", imageBuffer, function(err) { 
+fs.writeFile("/Applications/MAMP/htdocs/skberlaar/images/" + req.body.picurl, imageBuffer, function(err) { 
   res.end(JSON.stringify("success"));
 });
 
