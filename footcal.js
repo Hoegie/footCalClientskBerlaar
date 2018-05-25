@@ -488,7 +488,7 @@ alarmMessage2.addNotification({
 app.get("/skberlaar/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
 var alarmMessage7 = new gcm.Message();
-alarmMessage7.addNotification({
+alarmMessage7.addData({
   title: 'Test !',
   body: 'Test bericht van FootCal',
   icon: 'footcallogo',
