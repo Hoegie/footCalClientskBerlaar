@@ -295,7 +295,7 @@ console.log(teamID);
         alarmMessage2.addNotification({
           title: locTitle,
           body: body,
-          icon: 'skberlaarlogofinal',
+          icon: 'footcallogo',
           sound: 'true'
         });
         console.log(alarmMessage2);
@@ -352,7 +352,7 @@ console.log(teamID);
         alarmMessage3.addNotification({
           title: locTitle,
           body: body,
-          icon: 'skberlaarlogofinal',
+          icon: 'footcallogo',
           sound: 'true'
         });
         console.log(alarmMessage3);
@@ -396,7 +396,7 @@ var alarmMessage3 = new gcm.Message();
         alarmMessage3.addNotification({
           title: locTitle,
           body: locBody,
-          icon: 'skberlaarlogofinal',
+          icon: 'footcallogo',
           sound: 'true'
         });
         console.log(alarmMessage3);
@@ -436,7 +436,7 @@ var alarmMessage3 = new gcm.Message();
         alarmMessage3.addNotification({
           title: locTitle,
           body: locBody,
-          icon: 'skberlaarlogofinal',
+          icon: 'footcallogo',
           sound: 'true'
         });
         console.log(alarmMessage3);
@@ -462,7 +462,7 @@ var alarmMessage2 = new gcm.Message();
 alarmMessage2.addNotification({
   title: 'Verplaatsing !',
   body: body,
-  icon: 'skberlaarlogfinal',
+  icon: 'footcallogo',
   sound: 'true'
 });
   console.log(teamID);
@@ -491,7 +491,7 @@ var alarmMessage3 = new gcm.Message();
 alarmMessage3.addNotification({
   title: 'Test !',
   body: 'Test bericht van sk Berlaar',
-  icon: 'skberlaarlogfinal',
+  icon: 'footcallogo',
   sound: 'true'
 });
   connection.query("SELECT token from tokens WHERE device_type = 'Android' AND accountID = ?", req.params.accountid, function(err, rows, fields) {
