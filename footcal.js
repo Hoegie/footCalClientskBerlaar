@@ -16,6 +16,7 @@ var http = require('http');
 var path = require('path');
 var moment = require('moment');
 var sourcefile = require('./footcalini.js');
+var translatorfile = require('/app/nodeprojects/github/androidtranslator.js')
 
 
 //Get client variables
@@ -28,6 +29,7 @@ var apachedir = sourcefile.apachedir;
 var apiport = sourcefile.apiport;
 var mailaccount = sourcefile.mailaccount;
 var mailpassword = sourcefile.mailpassword;
+var androidtranslator = translatorfile.translator;
 //*************************************************************************
 
 //set database connection parameters
@@ -78,11 +80,11 @@ var apnProvider = new apn.Provider({
 
 /*IOS push messages*/
 //*************************************************************************
-app.get("/footcal/iosanulpush/:teamid/:date/:teamName/:eventType",function(req,res){
-  var teamID = req.params.teamid;
-  var date = req.params.date;
-  var teamName = req.params.teamName;
-  var eventType = req.params.eventType;
+app.post("/footcal/iosanulpush",function(req,res){
+  var teamID = req.body.teamid;
+  var date = req.body.date;
+  var teamName = req.body.teamname;
+  var eventType = req.body.eventType;
   var locKey = "%1$@ " + "%2$@ " + eventType;
   console.log(date);
   console.log(teamName);
@@ -266,52 +268,38 @@ alarmMessage.addNotification({
   sound: 'true'
 });
 
-var sender = new gcm.Sender('AIzaSyAqRt3-NOe1ImhUccPAJ9547WuCncAyIsU');
+var sender = new gcm.Sender('AIzaSyDol9RlosgGd7sg0NVIyW40mw1pqG_c8nc');
 
 
 /*ANDROID push messages*/
 
-app.get("/skberlaar/androidpush/:teamid",function(req,res){
-var teamID = req.params.teamid;
-  console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android'";
-  connection.query(connquery, function(err, rows, fields) {
-    if (!err){
-      res.end(JSON.stringify(rows));
-      console.log(rows)
-      rows.forEach(function(row, i) {
-          sender.sendNoRetry(alarmMessage, { to : row.token }, function(err, response) {
-        if(err) console.error(err);
-        else {
-          console.log(JSON.stringify(response));
-        }
-      });
-      });
-    }else{
-      console.log('Error while performing Query.');
-    }
- });
-});
-
-
-app.get("/skberlaar/androidpushnew/:teamid/:body",function(req,res){
-var teamID = req.params.teamid;
-var body = req.params.body;
-console.log("Android push 2 gehit !!");
+app.post("/footcal/androidanulpush",function(req,res){
+var teamID = req.body.teamid;
+var date = req.body.date;
+var teamName = req.body.teamname;
+var eventType = req.body.eventType;
+var title = "annulation";
 var alarmMessage2 = new gcm.Message();
-alarmMessage2.addNotification({
-  title: 'Afgelasting !',
-  body: body,
-  icon: 'skberlaarlogfinal',
-  sound: 'true'
-});
-  console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Android'";
+console.log(teamID);
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        var locTitle = androidtranslator[row.device_language][title];
+        var body = androidtranslator[row.device_language][eventType];
+        body = body.replace("%1", date);
+        body = body.replace("%2", teamName);
+        alarmMessage2.addNotification({
+          title: locTitle,
+          body: body,
+          icon: 'skberlaarlogofinal',
+          sound: 'true'
+        });
+        console.log(alarmMessage2);
+
           sender.sendNoRetry(alarmMessage2, { to : row.token }, function(err, response) {
         if(err) console.error(err);
         else {
@@ -325,24 +313,134 @@ alarmMessage2.addNotification({
  });
 });
 
-app.get("/skberlaar/androidlivepush/:teamid/:title/:body",function(req,res){
-var teamID = req.params.teamid;
-var body = req.params.body;
-var title = req.params.title;
-var alarmMessage3 = new gcm.Message();
-alarmMessage3.addNotification({
-  title: title,
-  body: body,
-  icon: 'skberlaarlogofinal',
-  sound: 'true'
+
+
+app.get("/footcal/androidlivepushtest",function(req,res){
+
+var my_name = "Sven";
+var language = "en";
+var text = "game_start";
+
+console.log(androidtranslator);
+/*
+var body = translator[language][text];
+body = body.replace("%1", my_name);
+console.log(body);
+*/
+
+
+
 });
-  console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+
+app.post("/footcal/androidlivepush",function(req,res){
+var teamID = req.body.teamid;
+var body = req.body.body;
+var title = req.body.title;
+var teamName = req.body.teamname;
+
+var alarmMessage3 = new gcm.Message();
+console.log(teamID);
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        var locTitle = androidtranslator[row.device_language][title];
+        locTitle = locTitle.replace("%1", teamName);
+        alarmMessage3.addNotification({
+          title: locTitle,
+          body: body,
+          icon: 'skberlaarlogofinal',
+          sound: 'true'
+        });
+        console.log(alarmMessage3);
+
+          sender.sendNoRetry(alarmMessage3, { to : row.token }, function(err, response) {
+        if(err) console.error(err);
+        else {
+          console.log(JSON.stringify(response));
+        }
+      });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
+
+app.post("/footcal/androidgoallivepush",function(req,res){
+var teamID = req.body.teamid;
+var body = req.body.body;
+var title = req.body.title;
+var teamName = req.body.teamname;
+var playerName = req.body.playername;
+var homeGoals = req.body.homegoals;
+var awayGoals = req.body.awaygoals;
+var alarmMessage3 = new gcm.Message();
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+        var locTitle = androidtranslator[row.device_language][title];
+        locTitle = locTitle.replace("%1", teamName);
+        var locBody = androidtranslator[row.device_language][body];
+        locBody = locBody.replace("%1", playerName);
+        locBody = locBody.replace("%2", homeGoals);
+        locBody = locBody.replace("%3", awayGoals);
+        alarmMessage3.addNotification({
+          title: locTitle,
+          body: locBody,
+          icon: 'skberlaarlogofinal',
+          sound: 'true'
+        });
+        console.log(alarmMessage3);
+
+          sender.sendNoRetry(alarmMessage3, { to : row.token }, function(err, response) {
+        if(err) console.error(err);
+        else {
+          console.log(JSON.stringify(response));
+        }
+      });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
+
+app.post("/footcal/androidddatemovepush",function(req,res){
+var teamID = req.body.teamid;
+var body = req.body.body;
+var olddate = req.body.olddate;
+var newdate = req.body.newdate;
+var title = "event_moved";
+var alarmMessage3 = new gcm.Message();
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+        var locTitle = androidtranslator[row.device_language][title];
+        var locBody = androidtranslator[row.device_language][body];
+        locBody = locBody.replace("%1", olddate);
+        locBody = locBody.replace("%2", newdate);
+        alarmMessage3.addNotification({
+          title: locTitle,
+          body: locBody,
+          icon: 'skberlaarlogofinal',
+          sound: 'true'
+        });
+        console.log(alarmMessage3);
+
           sender.sendNoRetry(alarmMessage3, { to : row.token }, function(err, response) {
         if(err) console.error(err);
         else {
@@ -684,8 +782,8 @@ connection.query("SELECT events.referee, events.teamID, events.event_type, event
 
                   //var fileName = 'gamereports/' + teamnameDB + '_' + formatted + '.html';
                   
-                  var fileName = '/Applications/MAMP/htdocs/' + apachedir + '/gamereports/' + teamnameDB + '_' + formatted + '.html';   
-                  //var fileName = '/var/www/html/' + apachedir + '/gamereports/' + teamnameDB + '_' + formatted + '.html';  
+                  //var fileName = '/Applications/MAMP/htdocs/' + apachedir + '/gamereports/' + teamnameDB + '_' + formatted + '.html';   
+                  var fileName = '/var/www/html/' + apachedir + '/gamereports/' + teamnameDB + '_' + formatted + '.html';  
 
                   fileName = fileName.replace(" ", "_"); 
 
@@ -1073,7 +1171,8 @@ app.post("/apn/new",function(req,res){
         device_name: req.body.devicename,
         device_ID: req.body.deviceID,
         token: req.body.token,
-        device_type: req.body.devicetype
+        device_type: req.body.devicetype,
+        device_language: req.body.language
     };
     console.log(post);
 connection.query('INSERT INTO tokens SET ?', post, function(err,result) {
@@ -1122,6 +1221,21 @@ app.put("/apn/sendflags/:accountid/:deviceid",function(req,res){
         send: req.body.send,
         send_anul: req.body.sendanul,
         send_livemode: req.body.sendlivemode
+    };
+    console.log(put);
+connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[put, req.params.accountid, req.params.deviceid], function(err,result) {
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result.changedRows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/apn/language/:accountid/:deviceid",function(req,res){
+  var put = {
+        device_language: req.body.language
     };
     console.log(put);
 connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[put, req.params.accountid, req.params.deviceid], function(err,result) {
