@@ -487,10 +487,10 @@ alarmMessage2.addNotification({
 
 app.get("/skberlaar/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
-var alarmMessage3 = new gcm.Message();
-alarmMessage3.addNotification({
+var alarmMessage7 = new gcm.Message();
+alarmMessage7.addNotification({
   title: 'Test !',
-  body: 'Test bericht van sk Berlaar',
+  body: 'Test bericht van FootCal',
   icon: 'footcallogo',
   sound: 'true'
 });
@@ -499,9 +499,11 @@ alarmMessage3.addNotification({
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
-          sender.sendNoRetry(alarmMessage3, { to : row.token }, function(err, response) {
+          sender.sendNoRetry(alarmMessage7, { to : row.token }, function(err, response) {
         if(err) console.error(err);
         else {
+          console.log("message sent");
+          console.log(i);
           console.log(JSON.stringify(response));
         }
       });
