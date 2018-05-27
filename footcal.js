@@ -1,4 +1,4 @@
-//VERSION 1,0,0
+//LIVE VERSION 1,0,0
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
@@ -488,7 +488,7 @@ alarmMessage2.addNotification({
 app.get("/skberlaar/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
 var alarmMessage7 = new gcm.Message();
-alarmMessage7.addData({
+alarmMessage7.addNotification({
   title: 'Test !',
   body: 'Test bericht van FootCal',
   icon: 'footcallogo',
