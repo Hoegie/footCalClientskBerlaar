@@ -487,7 +487,9 @@ alarmMessage2.addNotification({
 
 app.get("/skberlaar/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
-var alarmMessage7 = new gcm.Message();
+var alarmMessage7 = new gcm.Message({
+  restrictedPackageName: "be.degronckel.FootCal"
+});
 alarmMessage7.addNotification({
   title: 'Test !',
   body: 'Test bericht van FootCal',
