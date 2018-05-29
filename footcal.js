@@ -1,9 +1,10 @@
-//LIVE VERSION 1,0,0
+//LIVE VERSION 1,0,0 incl fcm
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
 var apn = require('apn');
 var gcm = require('node-gcm');
+var fcm = require('fcm-push');
 var nodemailer = require('nodemailer');
 var ejs = require('ejs');
 var fs = require('fs');
@@ -269,6 +270,7 @@ alarmMessage.addNotification({
 });
 
 var sender = new gcm.Sender('AIzaSyDol9RlosgGd7sg0NVIyW40mw1pqG_c8nc');
+var fcmSender = new fcm('AAAAPK8iGGM:APA91bEJUBP-ilZOqYz_5roVMdx3KkjKC6Av5H-p3LsT9kb9Y1gBTNeQP76HBUj7ky7bc8h72E0nMaaSPUISf8Cp0sUvdyle0F2-aPsI1wafilUqGXlnIqHpk7bGBWuUKovH637ltoYl');
 
 
 /*ANDROID push messages*/
@@ -292,20 +294,39 @@ console.log(teamID);
         var body = androidtranslator[row.device_language][eventType];
         body = body.replace("%1", date);
         body = body.replace("%2", teamName);
+
+        var fcmMessage = {
+          to: row.token,
+          notification: {
+            title: locTitle,
+            body: body,
+            sound: 'true'
+          }
+        };
+        console.log(fcmMessage);
         alarmMessage2.addNotification({
           title: locTitle,
           body: body,
           icon: 'footcallogo',
           sound: 'true'
         });
-        console.log(alarmMessage2);
+        
+        fcmSender.send(fcmMessage, function(err, response){
+        if (err) {
+          console.log("Something has gone wrong!" , err);
+        } else {
+         console.log("Successfully sent with response: ", response);
+        }
+        });
 
+        /*
           sender.sendNoRetry(alarmMessage2, { to : row.token }, function(err, response) {
         if(err) console.error(err);
         else {
           console.log(JSON.stringify(response));
         }
-      });
+        });
+        */
       });
     }else{
       console.log('Error while performing Query.');
