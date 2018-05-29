@@ -1,4 +1,4 @@
-//LIVE VERSION 1,0,0 incl fcm
+//LIVE VERSION 2,0,0 incl fcm
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
