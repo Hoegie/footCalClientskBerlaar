@@ -3426,9 +3426,10 @@ app.post("/image/android/upload",function(req,res){
 console.log(req.body.picurl);
 console.log(req.body.photo);
 //res.end(JSON.stringify("success"));
+var uploadDir = '/var/www/html/' + apachedir + "/images/";
 
 var imageBuffer = new Buffer(req.body.photo, 'base64');
-fs.writeFile("/Applications/MAMP/htdocs/skberlaar/images/" + req.body.picurl, imageBuffer, function(err) { 
+fs.writeFile(uploadDir + req.body.picurl, imageBuffer, function(err) { 
   res.end(JSON.stringify("success"));
 });
 
