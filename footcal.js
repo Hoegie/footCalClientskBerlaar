@@ -79,6 +79,15 @@ var apnProvider = new apn.Provider({
   });  
 //*************************************************************************
 
+/*Authentication test routine*/
+
+app.all("/*", function(req, res, next){
+  console.log("all gehit !!");
+  console.log(req);
+  next();
+
+});
+
 /*IOS push messages*/
 //*************************************************************************
 app.post("/footcal/iosanulpush",function(req,res){
