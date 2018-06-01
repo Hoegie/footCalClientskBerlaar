@@ -86,6 +86,10 @@ app.all("/*", function(req, res, next){
   console.log("all gehit !!");
   var sourceAddress = req.connection.remoteAddress.toString();
 
+  console.log(sourceAddress);
+  console.log(serveraddress);
+  console.log(sourceAddress.indexOf(serveraddress));
+
   if (sourceAddress.indexOf(serveraddress) == -1){
     console.log("perfom Authentication !!");
   }
