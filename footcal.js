@@ -83,7 +83,8 @@ var apnProvider = new apn.Provider({
 
 app.all("/*", function(req, res, next){
   console.log("all gehit !!");
-  console.log(req);
+  console.log(req.connection.remoteAddress);
+  console.log(req.socket.remoteAddress);
   next();
 
 });
