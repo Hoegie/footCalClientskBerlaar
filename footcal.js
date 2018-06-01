@@ -31,6 +31,7 @@ var apiport = sourcefile.apiport;
 var mailaccount = sourcefile.mailaccount;
 var mailpassword = sourcefile.mailpassword;
 var androidtranslator = translatorfile.translator;
+var serveraddress = sourcefile.serveraddress;
 //*************************************************************************
 
 //set database connection parameters
@@ -83,8 +84,12 @@ var apnProvider = new apn.Provider({
 
 app.all("/*", function(req, res, next){
   console.log("all gehit !!");
-  console.log(req.connection.remoteAddress);
-  console.log(req.socket.remoteAddress);
+  var sourceAddress = req.connection.remoteAddress.toString();
+
+  if (sourcefile.indexOf(serveraddress) == -1){
+    console.log("perfom Authentication !!");
+  }
+
   next();
 
 });
