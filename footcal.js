@@ -117,12 +117,18 @@ app.post("/footcal/iosanulpush",function(req,res){
   notification2.locKey = locKey;
   notification2.locArgs = [date, teamName];
   console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+
+          if (clubID != row.active_clubID){
+            notification2.titleLocKey = "%1$@ Annulation";
+            notification2.titleLocArgs = [clubName];
+          }
+
           apnProvider.send(notification2, row.token).then(function(result) { 
             console.log(result);
           });
@@ -1248,6 +1254,21 @@ connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[pu
 app.put("/apn/language/:accountid/:deviceid",function(req,res){
   var put = {
         device_language: req.body.language
+    };
+    console.log(put);
+connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[put, req.params.accountid, req.params.deviceid], function(err,result) {
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result.changedRows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/apn/clubid/:accountid/:deviceid",function(req,res){
+  var put = {
+        active_clubID: req.body.clubid
     };
     console.log(put);
 connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[put, req.params.accountid, req.params.deviceid], function(err,result) {
