@@ -1274,7 +1274,7 @@ app.put("/apn/clubid/:accountid/:deviceid",function(req,res){
 connection.query('UPDATE tokens SET ? WHERE accountID = ? and device_ID = ?',[put, req.params.accountid, req.params.deviceid], function(err,result) {
   if (!err){
     console.log(result);
-    res.end(JSON.stringify(result.changedRows));
+    res.end(JSON.stringify(result));
   }else{
     console.log('Error while performing Query.');
   }
