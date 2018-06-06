@@ -321,7 +321,7 @@ console.log(teamID);
             title = "club_annulation";
           }
         var locTitle = androidtranslator[row.device_language][title];
-        locTitle = locTitle.replace("%1", "[" + clubName + "]");
+        locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
         var body = androidtranslator[row.device_language][eventType];
         body = body.replace("%1", date);
         body = body.replace("%2", teamName);
@@ -395,7 +395,7 @@ console.log(teamID);
           }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", teamName);
-        locTitle = locTitle.replace("%2", "[" + clubName + "]");
+        locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
         var fcmMessage = {
           to: row.token,
           notification: {
@@ -441,7 +441,7 @@ var awayGoals = req.body.awaygoals;
           }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", teamName);
-        locTitle = locTitle.replace("%2", "[" + clubName + "]");
+        locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", playerName);
         locBody = locBody.replace("%2", homeGoals);
@@ -488,7 +488,7 @@ var title = "event_moved";
             title = "club_" + title;
           }
         var locTitle = androidtranslator[row.device_language][title];
-        locTitle = locTitle.replace("%1", "[" + clubName + "]");
+        locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", olddate);
         locBody = locBody.replace("%2", newdate);
