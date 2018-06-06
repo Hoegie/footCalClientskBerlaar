@@ -153,12 +153,16 @@ app.post("/footcal/ioslivepush",function(req,res){
   notification3.titleLocArgs = [teamName];
   notification3.body = body;
   console.log("ioslivepush gehit !!");
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          if (clubID != row.active_clubID){
+            notification3.titleLocKey = "%2$@ " + title;
+            notification3.titleLocArgs = [teamName,clubName];
+          }
           apnProvider.send(notification3, row.token).then(function(result) { 
             console.log(result);
           });
@@ -186,12 +190,16 @@ app.post("/footcal/iosgoallivepush",function(req,res){
   notification5.locKey = body;
   notification5.locArgs = [playerName, homeGoals, awayGoals];
   console.log("ioslivegoalpush gehit !!");
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          if (clubID != row.active_clubID){
+            notification5.titleLocKey = "%2$@ " + title;
+            notification5.titleLocArgs = [teamName,clubName];
+          }
           apnProvider.send(notification5, row.token).then(function(result) { 
             console.log(result);
           });
@@ -208,7 +216,7 @@ app.post("/footcal/iospushdatemove",function(req,res){
   var body = req.body.body;
   var oldeDate = req.body.olddate;
   var newDate = req.body.newdate;
-  console.log("iospushdatmove gehit !");
+  console.log("iospushdatemove gehit !");
   var notification4 = new apn.Notification();
   notification4.topic = 'be.degronckel.FootCal';
   notification4.expiry = Math.floor(Date.now() / 1000) + 3600;
@@ -217,12 +225,16 @@ app.post("/footcal/iospushdatemove",function(req,res){
   notification4.locKey = body;
   notification4.locArgs = [oldeDate, newDate];
   console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          if (clubID != row.active_clubID){
+            notification4.titleLocKey = "%1$@ event moved";
+            notification4.titleLocArgs = [clubName];
+          }
           apnProvider.send(notification4, row.token).then(function(result) { 
             console.log(result);
           });
@@ -299,12 +311,15 @@ var eventType = req.body.eventType;
 var title = "annulation";
 console.log(teamID);
 
-  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        if (clubID != row.active_clubID){
+            title = "club_annulation";
+          }
         var locTitle = androidtranslator[row.device_language][title];
         var body = androidtranslator[row.device_language][eventType];
         body = body.replace("%1", date);
@@ -359,15 +374,6 @@ fcmSender.send(message, function(err, response){
         console.log("Successfully sent with response: ", response);
     }
 });
-
-/*
-var body = translator[language][text];
-body = body.replace("%1", my_name);
-console.log(body);
-*/
-
-
-
 });
 
 app.post("/footcal/androidlivepush",function(req,res){
@@ -383,8 +389,12 @@ console.log(teamID);
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        if (clubID != row.active_clubID){
+            title = "club_" + title;
+          }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", teamName);
+        locTitle = locTitle.replace("%2", clubName);
         var fcmMessage = {
           to: row.token,
           notification: {
@@ -425,8 +435,12 @@ var awayGoals = req.body.awaygoals;
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        if (clubID != row.active_clubID){
+            title = "club_" + title;
+          }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", teamName);
+        locTitle = locTitle.replace("%2", clubName);
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", playerName);
         locBody = locBody.replace("%2", homeGoals);
@@ -469,7 +483,11 @@ var title = "event_moved";
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+        if (clubID != row.active_clubID){
+            title = "club_" + title;
+          }
         var locTitle = androidtranslator[row.device_language][title];
+        locTitle = locTitle.replace("%1", clubName);
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", olddate);
         locBody = locBody.replace("%2", newdate);
