@@ -125,9 +125,9 @@ app.post("/footcal/iosanulpush",function(req,res){
       rows.forEach(function(row, i) {
 
           if (clubID != row.active_clubID){
-            notification2.titleLocKey = "%1$@ Annulation";
-            notification2.titleLocArgs = [clubName];
-            notification2.subtitle = clubName;
+            //notification2.titleLocKey = "%1$@ Annulation";
+            //notification2.titleLocArgs = [clubName];
+            notification2.subtitle = "[" + clubName + "]";
           }
 
           apnProvider.send(notification2, row.token).then(function(result) { 
@@ -161,8 +161,9 @@ app.post("/footcal/ioslivepush",function(req,res){
       console.log(rows)
       rows.forEach(function(row, i) {
           if (clubID != row.active_clubID){
-            notification3.titleLocKey = "%2$@ " + title;
-            notification3.titleLocArgs = [teamName,clubName];
+            //notification3.titleLocKey = "%2$@ " + title;
+            //notification3.titleLocArgs = [teamName,clubName];
+            notification3.subtitle = "[" + clubName + "]";
           }
           apnProvider.send(notification3, row.token).then(function(result) { 
             console.log(result);
@@ -198,8 +199,9 @@ app.post("/footcal/iosgoallivepush",function(req,res){
       console.log(rows)
       rows.forEach(function(row, i) {
           if (clubID != row.active_clubID){
-            notification5.titleLocKey = "%2$@ " + title;
-            notification5.titleLocArgs = [teamName,clubName];
+            //notification5.titleLocKey = "%2$@ " + title;
+            //notification5.titleLocArgs = [teamName,clubName];
+            notification5.subtitle = "[" + clubName + "]";
           }
           apnProvider.send(notification5, row.token).then(function(result) { 
             console.log(result);
@@ -233,8 +235,9 @@ app.post("/footcal/iospushdatemove",function(req,res){
       console.log(rows)
       rows.forEach(function(row, i) {
           if (clubID != row.active_clubID){
-            notification4.titleLocKey = "%1$@ event moved";
-            notification4.titleLocArgs = [clubName];
+            //notification4.titleLocKey = "%1$@ event moved";
+            //notification4.titleLocArgs = [clubName];
+            notification4.subtitle = "[" + clubName + "]";
           }
           apnProvider.send(notification4, row.token).then(function(result) { 
             console.log(result);
@@ -310,7 +313,6 @@ var date = req.body.date;
 var teamName = req.body.teamname;
 var eventType = req.body.eventType;
 var title = "annulation";
-var subtitle = "";
 console.log(teamID);
 
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
@@ -321,7 +323,6 @@ console.log(teamID);
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
             title = "club_annulation";
-            subtitle = clubName
           }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
@@ -333,7 +334,7 @@ console.log(teamID);
           to: row.token,
           notification: {
             title: locTitle,
-            subtitle: subtitle,
+            subtitle: "test",
             body: body,
             sound: 'true'
           }
