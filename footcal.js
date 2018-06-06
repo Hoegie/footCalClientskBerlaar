@@ -334,7 +334,6 @@ console.log(teamID);
           to: row.token,
           notification: {
             title: locTitle,
-            subtitle: "test",
             body: body,
             sound: 'true'
           }
