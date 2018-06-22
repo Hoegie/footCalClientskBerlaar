@@ -386,7 +386,7 @@ var title = req.body.title;
 var teamName = req.body.teamname;
 console.log(teamID);
 
-  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
@@ -432,7 +432,7 @@ var playerName = req.body.playername;
 var homeGoals = req.body.homegoals;
 var awayGoals = req.body.awaygoals;
 
-  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
@@ -480,7 +480,7 @@ var olddate = req.body.olddate;
 var newdate = req.body.newdate;
 var title = "event_moved";
 
-  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
