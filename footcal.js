@@ -28,8 +28,6 @@ var apisec = sourcefile.apisec;
 var dbname = sourcefile.dbname;
 var apachedir = sourcefile.apachedir;
 var apiport = sourcefile.apiport;
-var mailaccount = sourcefile.mailaccount;
-var mailpassword = sourcefile.mailpassword;
 var androidtranslator = translatorfile.translator;
 var serveraddress = sourcefile.serveraddress;
 //*************************************************************************
@@ -955,11 +953,11 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
     }
 
     if (matchtypeDB == 'home'){
-        hometeamDB = 'SK BERLAAR';
+        hometeamDB = clubName;
         awayteamDB = opponentnameDB;  
     }else{
         hometeamDB = opponentnameDB;
-        awayteamDB = 'SK BERLAAR';
+        awayteamDB = clubName;
     }
     /*teaminfoquery*/
     connection.query('SELECT teams.team_name, teams.team_division, teams.team_series, trainer.first_name as trainer_first_name, trainer.last_name as trainer_last_name, trainer.email_address as trainer_email_address, delegee.first_name as delegee_first_name, delegee.last_name as delegee_last_name, delegee.email_address as delegee_email_address, COALESCE(trainer2.email_address, "none") as trainer2_email_address, COALESCE(delegee2.email_address, "none") as delegee2_email_address FROM teams LEFT JOIN staff as trainer ON T1_ID = trainer.staff_ID LEFT JOIN staff AS trainer2 ON T2_ID = trainer2.staff_ID LEFT JOIN staff AS delegee ON D1_ID = delegee.staff_ID LEFT JOIN staff AS delegee2 ON D2_ID = delegee2.staff_ID WHERE team_ID = ?', teamID, function(err, rows, fields) {
@@ -1358,9 +1356,71 @@ connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.noti
   });
 });
 
+
+app.put("/php/settings",function(req,res){
+  var put = {
+        homeTeamName: req.body.teamname,
+        showOutfit: req.body.showoutfit,
+        outfitUrl: req.body.outfiturl,
+        showWebsite: req.body.showwebsite,
+        websiteUrl: req.body.websiteurl,
+        showNotif: req.body.shownotif,
+        notifText: req.body.notiftext
+    };
+    console.log(put);
+
+connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.notifdate + "', '%d-%m-%Y %H:%i'), ? WHERE settings_ID = 0", put, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.put("/settings/colors",function(req,res){
+  var put = {
+        color1: req.body.color1,
+        color2: req.body.color2,
+        navtextcolor: req.body.navtextcolor,
+        headertextcolor: req.body.headertextcolor
+    };
+    console.log(put);
+
+connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
 app.put("/settings/background",function(req,res){
   var put = {
         backgroundURL: req.body.backgroundurl
+    };
+    console.log(put);
+connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/settings/gamereportemail",function(req,res){
+  var put = {
+        gameReportEmails: req.body.emailaddresses
     };
     console.log(put);
 connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
@@ -1391,6 +1451,22 @@ connection.query('SELECT * from phpaccounts', function(err, rows, fields) {
   });
 });
 
+app.get("/phpaccounts/phpaccountid/:phpaccountid",function(req,res){
+  var data = {
+        phpaccountid: req.params.phpaccountid
+    };
+    console.log(data.email)
+connection.query('SELECT * from phpaccounts WHERE phpaccount_ID = ?', data.phpaccountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.get("/phpaccounts/email/:email",function(req,res){
   var data = {
         email: req.params.email
@@ -1401,6 +1477,59 @@ connection.query('SELECT * from phpaccounts WHERE email_address = ?', data.email
   if (!err){
     console.log('The solution is: ', rows);
     res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.post("/phpaccounts/new",function(req,res){
+  var post = {
+        email_address: req.body.emailaddress,
+        password: req.body.password,
+        user_role: req.body.userrole
+    };
+    console.log(post);
+connection.query('INSERT INTO phpaccounts SET ?', post, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/phpaccounts/edit/:phpaccountid",function(req,res){
+  var put = {
+        email_address: req.body.emailaddress,
+        password: req.body.password,
+        user_role: req.body.userrole
+    };
+    console.log(put);
+connection.query('UPDATE phpaccounts SET ? WHERE phpaccount_ID = ?', [put, req.params.phpaccountid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.delete("/phpaccount/:phpaccountid",function(req,res){
+  var data = {
+        phpaccountid: req.params.phpaccountid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM phpaccounts WHERE phpaccount_ID = ?', data.phpaccountid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
   }else{
     console.log('Error while performing Query.');
   }
@@ -1636,11 +1765,62 @@ connection.query('SELECT user_role, password, userrole_ID, rights_level FROM use
   });
 });
 
+app.get("/userroles/php/all",function(req,res){
+connection.query('SELECT userrole_ID, user_role as Profiel, password as Paswoord FROM userroles WHERE userrole_ID <> 1', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/userroles/password/:userroleid",function(req,res){
+  var put = {
+        password: req.body.password
+    };
+    console.log(put);
+connection.query('UPDATE userroles SET ? WHERE userrole_ID = ?', [put, req.params.userroleid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 /*TEAMS*/
 
 app.get("/teams/all",function(req,res){
 connection.query('SELECT team_ID, team_name, team_series, team_division FROM teams ORDER BY LPAD(lower(team_name), 10,0) ASC', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/staff/limit/:offset/:limit",function(req,res){
+connection.query('SELECT staff_ID, first_name as "Naam", last_name as "Familienaam", title as "Functie", email_address as "Email adres", gsm as "GSM" FROM staff ORDER BY Familienaam ASC LIMIT ?, ?',[parseInt(req.params.offset), parseInt(req.params.limit)], function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/teams/php/all",function(req,res){
+connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling FROM teams ORDER BY LPAD(lower(Ploeg), 10,0) ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -1970,6 +2150,19 @@ connection.query('SELECT players.player_ID, players.first_name, players.last_nam
   });
 });
 
+app.get("/players/php/limit/:offset/:limit",function(req,res){
+  console.log(req.params.offset);
+  console.log(req.params.limit);
+connection.query('SELECT players.player_ID, players.first_name as "Naam", players.last_name as "Familienaam", players.street as "Straat", players.street_nr as "Nr", players.postal_code as "Postcode", players.town as "Woonplaats", COALESCE(teams.team_name, "Geen Ploeg") as Ploeg FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE players.player_ID > 2 ORDER BY LPAD(lower(Ploeg), 10,0) ASC, players.last_name ASC LIMIT ?, ?',[parseInt(req.params.offset), parseInt(req.params.limit)], function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.get("/players/export/all",function(req,res){
 connection.query('SELECT players.first_name, players.last_name, CONVERT(DATE_FORMAT(players.birth_date,"%d-%m-%Y"), CHAR(50)) as birth_date_string, players.birth_place, players.street, players.street_nr, players.postal_code, players.town, CONVERT(DATE_FORMAT(players.membership_date,"%d-%m-%Y"), CHAR(50)) as membership_date_string, players.membership_nr FROM players WHERE players.player_ID > 2 ORDER BY players.birth_date', function(err, rows, fields) {
@@ -2187,6 +2380,17 @@ connection.query('SELECT * FROM players_emails where playerID = ?', req.params.p
   });
 });
 
+app.get("/playersemail/php/playerid/:playerid",function(req,res){
+connection.query('SELECT email_ID, playerID, email_address as "Email adres", owner as "Email houder" FROM players_emails where playerID = ?', req.params.playerid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.get("/playersemail/emailid/:emailid",function(req,res){
 connection.query('SELECT * FROM players_emails where email_ID = ?', req.params.emailid, function(err, rows, fields) {
@@ -2344,6 +2548,18 @@ connection.query('DELETE FROM players_emails WHERE email_ID = ?', data.emailid, 
 
 app.get("/playersgsm/playerid/:playerid",function(req,res){
 connection.query('SELECT * FROM players_gsms where playerID = ?', req.params.playerid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/playersgsm/php/playerid/:playerid",function(req,res){
+connection.query('SELECT gsm_ID, playerID, gsm_number as "GSM nummer", owner as "GSM houder" FROM players_gsms where playerID = ?', req.params.playerid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -2987,6 +3203,21 @@ connection.query('SELECT COUNT(*) as number from opponents', function(err, rows,
     res.end(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/opponents/limit/:offset/:limit",function(req,res){
+  console.log(req.params.offset);
+  console.log(req.params.limit);
+connection.query('SELECT opponent_ID, concat(prefix, " ", name) as "Club Naam" FROM opponents ORDER BY name ASC LIMIT ?, ?',[parseInt(req.params.offset), parseInt(req.params.limit)], function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+    console.log(err);
   }
   });
 });
