@@ -3761,6 +3761,53 @@ fs.unlink(fullImageName, function(error){
 
 });
 
+
+/*Game reports file listing*/
+
+app.get("/files/gamereports",function(req,res){
+
+//var path = '/Applications/MAMP/htdocs/FootCal/' + apachedir + '/gamereports';
+var path = '/var/www/html/' + apachedir + '/gamereports'
+
+  fs.readdir(path, function(err, items){
+    console.log(items);
+    res.end(JSON.stringify(items));
+
+  });
+
+});
+
+
+app.post("/files/gamereports/delete",function(req,res){
+var fileName = req.body.filename;
+
+var fullFileName = '/var/www/html/' + apachedir + '/gamereports/' + fileName;
+//var fullFileName = '/Applications/MAMP/htdocs/FootCal/' + apachedir + '/gamereports/' + fileName
+
+fs.unlink(fullFileName, function(error){
+
+  if (!error){
+    console.log('File deleted');
+    var outputArray = [];
+    var outputDic = {
+    response: 'Success'
+    };
+    outputArray.push(outputDic);
+    res.end(JSON.stringify(outputDic));
+  } else {
+    console.log('File deleted failed !');
+    var outputArray = [];
+    var outputDic = {
+    response: 'Failure'
+    };
+    outputArray.push(outputDic);
+    res.end(JSON.stringify(outputDic));
+  }
+
+});
+
+});
+
 /*XML - GPX parser*/
 
 app.get("/xmltest",function(req,res){
