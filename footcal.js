@@ -1423,7 +1423,7 @@ app.put("/settings/gamereportemail",function(req,res){
         gameReportEmails: req.body.emailaddresses
     };
     console.log(put);
-connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
+connection.query("UPDATE settings SET ? WHERE settings_ID = 1", put, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
@@ -1524,7 +1524,7 @@ app.delete("/phpaccount/:phpaccountid",function(req,res){
   var data = {
         phpaccountid: req.params.phpaccountid
     };
-    console.log(data.id);
+    console.log(data.phpaccountid);
 connection.query('DELETE FROM phpaccounts WHERE phpaccount_ID = ?', data.phpaccountid, function(err,result) {
 /*connection.end();*/
   if (!err){
