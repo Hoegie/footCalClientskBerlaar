@@ -1344,7 +1344,7 @@ app.put("/settings",function(req,res){
     };
     console.log(put);
 
-connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.notifdate + "', '%d-%m-%Y %H:%i'), ? WHERE settings_ID = 0", put, function(err,result) {
+connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.notifdate + "', '%d-%m-%Y %H:%i'), ? WHERE settings_ID = 1", put, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
@@ -1368,7 +1368,7 @@ app.put("/php/settings",function(req,res){
     };
     console.log(put);
 
-connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.notifdate + "', '%d-%m-%Y %H:%i'), ? WHERE settings_ID = 0", put, function(err,result) {
+connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.notifdate + "', '%d-%m-%Y %H:%i'), ? WHERE settings_ID = 1", put, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
@@ -1389,7 +1389,7 @@ app.put("/settings/colors",function(req,res){
     };
     console.log(put);
 
-connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
+connection.query("UPDATE settings SET ? WHERE settings_ID = 1", put, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
@@ -1406,7 +1406,7 @@ app.put("/settings/background",function(req,res){
         backgroundURL: req.body.backgroundurl
     };
     console.log(put);
-connection.query("UPDATE settings SET ? WHERE settings_ID = 0", put, function(err,result) {
+connection.query("UPDATE settings SET ? WHERE settings_ID = 1", put, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
