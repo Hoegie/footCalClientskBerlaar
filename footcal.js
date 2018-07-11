@@ -3,7 +3,6 @@ var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
 var apn = require('apn');
-//var gcm = require('node-gcm');
 var fcm = require('fcm-push');
 var nodemailer = require('nodemailer');
 var ejs = require('ejs');
