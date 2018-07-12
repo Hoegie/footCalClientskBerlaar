@@ -3794,6 +3794,32 @@ var path = '/var/www/html/' + apachedir + '/gamereports'
 
 });
 
+app.get("/files/gamereportyears",function(req,res){
+
+//var path = '/Applications/MAMP/htdocs/FootCal/' + apachedir + '/gamereports';
+var path = '/var/www/html/' + apachedir + '/gamereports'
+var yearArray = [];
+
+  fs.readdir(path, function(err, items){
+    console.log(items);
+
+    items.forEach(function(item, i) {
+
+        var fileNameArray = item.split("_");
+        if (fileNameArray.length > 3){
+          if (yearArray.indexOf(fileNameArray[4]) == -1){
+              yearArray.push(fileNameArray[4]);
+          }
+        }
+
+    });
+
+    res.end(JSON.stringify(yearArray));
+
+  });
+
+});
+
 
 app.post("/files/gamereports/delete",function(req,res){
 var fileName = req.body.filename;
