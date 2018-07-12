@@ -1,4 +1,4 @@
-//LIVE VERSION 4,0,3 incl fcm
+//LIVE VERSION 4,0,4 incl fcm
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
@@ -23,6 +23,7 @@ var translatorfile = require('/app/nodeprojects/github/androidtranslator.js')
 //*************************************************************************
 var clubID = sourcefile.clubID;
 var clubName = sourcefile.clubName;
+var clubBaseNr = sourcefile.clubBaseNr;
 var apisec = sourcefile.apisec;
 var dbname = sourcefile.dbname;
 var apachedir = sourcefile.apachedir;
@@ -797,6 +798,9 @@ connection.query("SELECT events.referee, events.teamID, events.event_type, event
                   }
 
                   var htmloutput = ejs.render(htmltemplate, {
+
+                  clubname : clubName,
+                  clubbasenr : clubBaseNr, 
                   hometeam : hometeamDB,
                   awayteam : awayteamDB,
                   matchtype : eventTypeDB,
@@ -1038,6 +1042,9 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
                   }
 
                   var htmloutput = ejs.render(htmltemplate, {
+
+                  clubname : clubName,
+                  clubbasenr : clubBaseNr,   
                   hometeam : hometeamDB,
                   awayteam : awayteamDB,
                   matchtype : eventTypeDB,

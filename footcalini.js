@@ -1,5 +1,6 @@
 module.exports.clubID = '1';
 module.exports.clubName = 'SK BERLAAR';
+module.exports.clubBaseNr = '9375';
 module.exports.apisec = false;
 module.exports.dbname = 'FootCal_skBerlaar';
 module.exports.apachedir = 'skBerlaar';
