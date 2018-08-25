@@ -389,6 +389,8 @@ var teamID = req.body.teamid;
 var body = req.body.body;
 var title = req.body.title;
 var teamName = req.body.teamname;
+console.log("Android title :");
+console.log(title);
 console.log(teamID);
 
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
@@ -400,7 +402,10 @@ console.log(teamID);
         if (clubID != row.active_clubID){
             title = "club_" + title;
           }
+        console.log(row.device_language);
+        console.log(title);  
         var locTitle = androidtranslator[row.device_language][title];
+        console.log(locTitle);
         locTitle = locTitle.replace("%1", teamName);
         locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
         var fcmMessage = {
