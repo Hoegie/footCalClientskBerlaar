@@ -388,10 +388,8 @@ app.post("/footcal/androidlivepush",function(req,res){
 var teamID = req.body.teamid;
 var body = req.body.body;
 var title = req.body.title;
+var sendTitle = "";
 var teamName = req.body.teamname;
-console.log("Android title :");
-console.log(title);
-console.log(teamID);
 
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
@@ -400,11 +398,11 @@ console.log(teamID);
       console.log(rows)
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
-            title = "club_" + title;
-          }
-        console.log(row.device_language);
-        console.log(title);  
-        var locTitle = androidtranslator[row.device_language][title];
+            sendTitle = "club_" + title;
+          } else {
+            sendTitle = title;
+          } 
+        var locTitle = androidtranslator[row.device_language][sendTitle];
         console.log(locTitle);
         locTitle = locTitle.replace("%1", teamName);
         locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
@@ -437,6 +435,7 @@ app.post("/footcal/androidgoallivepush",function(req,res){
 var teamID = req.body.teamid;
 var body = req.body.body;
 var title = req.body.title;
+var sendTitle = "";
 var teamName = req.body.teamname;
 var playerName = req.body.playername;
 var assistName = req.body.assistname;
@@ -450,9 +449,11 @@ var awayGoals = req.body.awaygoals;
       console.log(rows)
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
-            title = "club_" + title;
+            sendTitle = "club_" + title;
+          } else {
+            sendTitle = title;
           }
-        var locTitle = androidtranslator[row.device_language][title];
+        var locTitle = androidtranslator[row.device_language][sendTitle];
         locTitle = locTitle.replace("%1", teamName);
         locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
         var locBody = androidtranslator[row.device_language][body];
@@ -498,6 +499,7 @@ var body = req.body.body;
 var olddate = req.body.olddate;
 var newdate = req.body.newdate;
 var title = "event_moved";
+var sendTitle = "";
 
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
@@ -506,9 +508,11 @@ var title = "event_moved";
       console.log(rows)
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
-            title = "club_" + title;
+            sendTitle = "club_" + title;
+          } else {
+            sendTitle = title;
           }
-        var locTitle = androidtranslator[row.device_language][title];
+        var locTitle = androidtranslator[row.device_language][sendTitle];
         locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", olddate);
