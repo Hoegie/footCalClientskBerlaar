@@ -457,6 +457,8 @@ var awayGoals = req.body.awaygoals;
         locTitle = locTitle.replace("%1", teamName);
         locTitle = locTitle.replace("%2", "[" + clubName.toLowerCase() + "]");
         var locBody = androidtranslator[row.device_language][body];
+        console.log(body);
+        console.log(locBody);
         if (assistName != "none") {
           locBody = locBody.replace("%1", playerName);
           locBody = locBody.replace("%2", assistName);
