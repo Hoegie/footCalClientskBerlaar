@@ -3465,7 +3465,7 @@ app.post("/goals/new",function(req,res){
         playerID: req.body.playerid,
         goals: req.body.goals,
         timestamps: req.body.timestamps,
-        assists: req.body.assists
+        assists: req.body.assists,
         teamID: req.body.teamid
     };
     console.log(post);
