@@ -1414,10 +1414,14 @@ connection.query("UPDATE settings SET notifDate = STR_TO_DATE('" + req.body.noti
 
 app.put("/settings/colors",function(req,res){
   var put = {
+        navgrad1: req.body.navgrad1,
+        navgrad2: req.body.navgrad2,
         color1: req.body.color1,
         color2: req.body.color2,
         navtextcolor: req.body.navtextcolor,
-        headertextcolor: req.body.headertextcolor
+        headertextcolor: req.body.headertextcolor,
+        backgrad1: req.body.backgrad1,
+        backgrad2: req.body.backgrad2
     };
     console.log(put);
 
