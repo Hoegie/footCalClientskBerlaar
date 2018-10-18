@@ -497,6 +497,7 @@ var awayGoals = req.body.awaygoals;
 
 app.post("/footcal/androidddatemovepush",function(req,res){
 var teamID = req.body.teamid;
+var teamName = req.body.teamname;
 var body = req.body.body;
 var olddate = req.body.olddate;
 var newdate = req.body.newdate;
@@ -519,6 +520,7 @@ var sendTitle = "";
         var locBody = androidtranslator[row.device_language][body];
         locBody = locBody.replace("%1", olddate);
         locBody = locBody.replace("%2", newdate);
+        locBody = locBody.replace("%3", teamName);
         var fcmMessage = {
           to: row.token,
           notification: {
