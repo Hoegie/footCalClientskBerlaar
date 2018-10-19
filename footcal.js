@@ -222,6 +222,7 @@ app.post("/footcal/iospushdatemove",function(req,res){
   var body = req.body.body;
   var oldeDate = req.body.olddate;
   var newDate = req.body.newdate;
+  var teamName = req.body.teamname;
   console.log("iospushdatemove gehit !");
   var notification4 = new apn.Notification();
   notification4.topic = 'be.degronckel.FootCal';
@@ -229,7 +230,7 @@ app.post("/footcal/iospushdatemove",function(req,res){
   notification4.sound = 'ping.aiff';
   notification4.titleLocKey = 'event moved';
   notification4.locKey = body;
-  notification4.locArgs = [oldeDate, newDate];
+  notification4.locArgs = [oldeDate, newDate, teamName];
   console.log(teamID);
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
