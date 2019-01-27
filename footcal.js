@@ -130,6 +130,7 @@ app.post("/footcal/iosanulpush",function(req,res){
 
           apnProvider.send(notification2, row.token).then(function(result) { 
             console.log(result);
+            console.log(result.failed);
           });
       });
     }else{
