@@ -764,7 +764,8 @@ connection.query("SELECT events.referee, events.teamID, events.event_type, event
 
 
           /*playersquery*/  
-          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
+          //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
+          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
           connection.query(connquery, function(err, rows, fields) {
 
             if (!err){
@@ -772,12 +773,19 @@ connection.query("SELECT events.referee, events.teamID, events.event_type, event
 
 
               /*scoresquery*/
-              var connquery2 = "SELECT players.first_name, players.last_name, COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) as goals, COALESCE((SELECT goals.timestamps from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 'none') as timestamps FROM players where players.player_ID IN " + confirms + " AND COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) <> '0'"
+              //var connquery2 = "SELECT players.first_name, players.last_name, COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) as goals, COALESCE((SELECT goals.timestamps from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 'none') as timestamps FROM players where players.player_ID IN " + confirms + " AND COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) <> '0'"
+              var connquery2 = "SELECT concat(players.first_name, ' ', players.last_name) as name, goals_new.timestamp FROM goals_new LEFT JOIN players ON goals_new.playerID = players.player_ID WHERE goals_new.eventID = " + eventID + " ORDER BY goals_new.timestamp ASC";
               connection.query(connquery2, function(err, rows, fields) {
 
                 if (!err){
                   
-                    var scoresarray = [];
+                    //var scoresarray = [];
+                    var scoresarray = rows;
+                    for(var i=0; i < scoresarray.length; i++) {
+                      scoresarray[i].name = scoresarray[i].name.replace('Opponent', 'Tegenstander');
+                      
+                    }
+                    /*
                     rows.forEach(function(row, i) {
 
                         var timestampstring = row.timestamps;
@@ -797,7 +805,7 @@ connection.query("SELECT events.referee, events.teamID, events.event_type, event
                         scoresarray.sort(function(a,b){return a.timestamp-b.timestamp});
 
                     }); 
-
+                    */
                   if (players.length > scoresarray.length) {
                       //fill out the scoresarray
                       var difference =  players.length - scoresarray.length;
@@ -960,6 +968,15 @@ app.get("/tournamentexport/:teventid",function(req,res){
 var tournamentEventID = req.params.teventid;
 var htmltemplate = fs.readFileSync('wedstrijdblad.html',{encoding:'utf-8'});
 
+
+/*email address query*/
+
+connection.query("SELECT gameReportEmails FROM settings", function(err, rows, fields) {
+
+  if (!err && rows.length > 0){
+
+  var gameReportEmailString = rows[0].gameReportEmails;
+
 /*matchinfoquery*/
 connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tournamentevents.match_type, tournamentevents.confirmed_players, CONVERT(DATE_FORMAT(tournamentevents.date,'%d-%m-%Y'), CHAR(50)) as event_date, CONVERT(DATE_FORMAT(tournamentevents.date,'%H:%i'), CHAR(50)) as event_time, COALESCE(tournamentresults.homegoals, 1000) as homegoals, COALESCE(tournamentresults.awaygoals, 1000) as awaygoals, CONVERT(COALESCE(concat(opponentteam.prefix, ' ', opponentteam.name), 'none'), CHAR(50)) as opponent_name, CONVERT(COALESCE(concat(opponentplace.prefix, ' ', opponentplace.name), 'none'), CHAR(50)) as event_location FROM tournamentevents LEFT JOIN tournamentresults ON tournamentevents.tournamentevent_ID = tournamentresults.tournamenteventID LEFT JOIN opponents AS opponentteam ON tournamentevents.opponentID = opponentteam.opponent_ID LEFT JOIN opponents AS opponentplace ON tournamentevents.locationID = opponentplace.opponent_ID WHERE tournamentevent_ID = ?", tournamentEventID, function(err, rows, fields) {
 
@@ -1008,7 +1025,8 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
 
 
           /*playersquery*/  
-          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
+          //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
+          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
           connection.query(connquery, function(err, rows, fields) {
 
             if (!err){
@@ -1016,11 +1034,18 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
 
 
               /*scoresquery*/
-              var connquery2 = "SELECT players.first_name, players.last_name, COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) as goals, COALESCE((SELECT tournamentgoals.timestamps from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 'none') as timestamps FROM players where players.player_ID IN " + confirms + " AND COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) <> '0'"
+              //var connquery2 = "SELECT players.first_name, players.last_name, COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) as goals, COALESCE((SELECT tournamentgoals.timestamps from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 'none') as timestamps FROM players where players.player_ID IN " + confirms + " AND COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) <> '0'"
+              var connquery2 = "SELECT concat(players.first_name, ' ', players.last_name) as name, tournamentgoals_new.timestamp FROM tournamentgoals_new LEFT JOIN players  ON tournamentgoals_new.playerID = players.player_ID WHERE tournamentgoals_new.tournamenteventID = " + tournamentEventID + " ORDER BY tournamentgoals_new.timestamp ASC";
               connection.query(connquery2, function(err, rows, fields) {
 
                 if (!err){
                   
+                    var scoresarray = rows;
+                    for(var i=0; i < scoresarray.length; i++) {
+                      scoresarray[i].name = scoresarray[i].name.replace('Opponent', 'Tegenstander');
+                      
+                    }
+                    /*  
                     var scoresarray = [];
                     rows.forEach(function(row, i) {
 
@@ -1041,6 +1066,7 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
                         scoresarray.sort(function(a,b){return a.timestamp-b.timestamp});
 
                     }); 
+                    */
 
                   if (players.length > scoresarray.length) {
                       //fill out the scoresarray
@@ -1110,8 +1136,8 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
                   });  
 
                   var mailOptions = {
-                    from: 'skberlaar.app@gmail.com',
-                    to: 'sven.degronckel@skynet.be',
+                    from: 'gamereport@footcal.be',
+                    to: gameReportEmailString,
                     cc: ccEmailAddressArray,
                     subject: 'Wedstrijd verslag' + ' ' + teamnameDB,
                     text: 'Het wedstrijdverslag vind je in attach.',
@@ -1183,7 +1209,17 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
               res.end(JSON.stringify(outputDic)); 
   }
   });/*matchinfoquery*/
-  
+  }else{
+    console.log('Error while performing Query.5');
+    var outputArray = [];
+              var outputDic = {
+                   response: "failed"
+                    };
+              outputArray.push(outputDic);
+              console.log(outputArray);
+              res.end(JSON.stringify(outputDic)); 
+  }
+  });/*email query*/
 });
 
 
@@ -2266,6 +2302,36 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players 
   });
 });
 
+
+app.get("/confirmedplayergoals/eventid/:eventid",function(req,res){
+connection.query('SELECT confirmed_players FROM events where event_ID = ?', req.params.eventid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    if (rows[0].confirmed_players != 'none'){
+      var confirms = '(' + rows[0].confirmed_players + ',2' + ')';
+      console.log(confirms);
+      var connquery = "SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = " + req.params.eventid + "), 0) as goals FROM players where players.player_ID IN " + confirms + " GROUP BY players.last_name ORDER BY CASE WHEN players.player_ID = 2 THEN 1 ELSE 0 END, players.last_name";
+      console.log(connquery);
+      connection.query(connquery, confirms, function(err, rows, fields) {
+      /*connection.end();*/
+       if (!err){
+       console.log('The solution is: ', rows);
+       console.log(confirms);
+        res.end(JSON.stringify(rows));
+        }else{
+          console.log('Error while performing Query.');
+        }
+      }); 
+    } else {
+      var emptyArray = [];
+      res.end(JSON.stringify(emptyArray));
+    }
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.get("/confirmedplayers/eventid/:eventid",function(req,res){
 connection.query('SELECT confirmed_players FROM events where event_ID = ?', req.params.eventid, function(err, rows, fields) {
@@ -3522,6 +3588,119 @@ connection.query('DELETE FROM goals WHERE goals_ID = ?', data.goalsid, function(
   });
 });
 
+/*GOALS_NEW*/
+
+app.get("/goals_new/opponent/:eventid",function(req,res){
+connection.query('SELECT COUNT(*) as goals FROM goals_new WHERE (playerID = 1) AND (eventID = ?)', req.params.eventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/goals_new/finalscore/:eventid",function(req,res){
+  var query = "SELECT owngoals, opponentgoals FROM (SELECT COUNT(*) as owngoals FROM goals_new WHERE goals_new.eventID = " + req.params.eventid + " AND goals_new.playerID <> 1) as owngoals, (SELECT COUNT(*) as opponentgoals FROM goals_new WHERE goals_new.eventID = " + req.params.eventid + " AND goals_new.playerID = 1) as opponentgoals";
+connection.query(query, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/goals_new/goals/:eventid/:playerid",function(req,res){
+connection.query("SELECT goals_new.goals_ID, goals_new.timestamp, COALESCE(concat(players.first_name, ' ', players.last_name), 'none') as assist_name FROM goals_new LEFT JOIN players ON goals_new.assistID = players.player_ID WHERE goals_new.eventID = ? AND goals_new.playerID = ? ORDER BY goals_new.timestamp ASC", [req.params.eventid, req.params.playerid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/goals_new/gameresume/:eventid",function(req,res){
+connection.query("SELECT goals_new.timestamp, goals_new.playerID, concat(goalplayers.first_name, ' ', goalplayers.last_name) as player_name, COALESCE(concat(assistplayers.first_name, ' ', assistplayers.last_name), 'none') as assist_name FROM goals_new LEFT JOIN players as assistplayers ON goals_new.assistID = assistplayers.player_ID LEFT JOIN players as goalplayers ON goals_new.playerID = goalplayers.player_ID WHERE goals_new.eventID = ? ORDER BY goals_new.timestamp ASC", req.params.eventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/goals_new/gameassists/:eventid",function(req,res){
+connection.query("SELECT goals_new.assistID, concat(players.first_name, ' ', players.last_name) as player_name, players.pic_url, COUNT(*) as assists FROM goals_new LEFT JOIN players ON goals_new.assistID = players.player_ID WHERE goals_new.assistID > 2 AND goals_new.eventID = ? GROUP BY goals_new.assistID ORDER BY assists DESC", req.params.eventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/goals_new/gamegoals/:eventid",function(req,res){
+connection.query("SELECT goals_new.playerID, concat(players.first_name, ' ', players.last_name) as player_name, players.pic_url, COUNT(*) as goals FROM goals_new LEFT JOIN players ON goals_new.playerID = players.player_ID WHERE goals_new.playerID > 2 AND goals_new.eventID = ? GROUP BY goals_new.playerID ORDER BY goals DESC", req.params.eventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.post("/goals_new/new",function(req,res){
+  var post = {
+        eventID: req.body.eventid,
+        playerID: req.body.playerid,
+        timestamp: req.body.timestamp,
+        assistID: req.body.assistid,
+        teamID: req.body.teamid
+    };
+    console.log(post);
+connection.query('INSERT INTO goals_new SET ?', post, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.delete("/goals_new/:goalsid",function(req,res){
+  var data = {
+        goalsid: req.params.goalsid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM goals_new WHERE goals_ID = ?', data.goalsid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 
 /*RESULTS*/
 
@@ -3585,6 +3764,37 @@ connection.query('SELECT confirmed_players, declined_players, extra_players FROM
   if (!err){
     console.log('The solution is: ', rows);
     res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.get("/confirmedplayergoals/tournamenteventid/:teventid",function(req,res){
+connection.query('SELECT confirmed_players FROM tournamentevents where tournamentevent_ID = ?', req.params.teventid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    if (rows[0].confirmed_players != 'none'){
+      var confirms = '(' + rows[0].confirmed_players + ',2' + ')';
+      console.log(confirms);
+      var connquery = "SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = " + req.params.teventid + "), 0) as tournamentgoals FROM players where players.player_ID IN " + confirms + " GROUP BY players.last_name ORDER BY CASE WHEN players.player_ID = 2 THEN 1 ELSE 0 END, players.last_name";
+      console.log(connquery);
+      connection.query(connquery, confirms, function(err, rows, fields) {
+      /*connection.end();*/
+       if (!err){
+       console.log('The solution is: ', rows);
+       console.log(confirms);
+        res.end(JSON.stringify(rows));
+        }else{
+          console.log('Error while performing Query.');
+        }
+      }); 
+    } else {
+      var emptyArray = [];
+      res.end(JSON.stringify(emptyArray));
+    }
   }else{
     console.log('Error while performing Query.');
   }
@@ -3861,6 +4071,119 @@ app.delete("/tournamentgoals/:tgoalsid",function(req,res){
     };
     console.log(data.id);
 connection.query('DELETE FROM tournamentgoals WHERE tournamentgoals_ID = ?', data.tgoalsid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+/*TOURNAMENTGOALS NEW*/
+
+app.get("/tournamentgoals_new/opponent/:teventid",function(req,res){
+connection.query('SELECT COUNT(*) as goals FROM tournamentgoals_new WHERE (playerID = 1) AND (tournamenteventID = ?)', req.params.teventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/tournamentgoals_new/finalscore/:teventid",function(req,res){
+  var query = "SELECT owngoals, opponentgoals FROM (SELECT COUNT(*) as owngoals FROM tournamentgoals_new WHERE tournamentgoals_new.tournamenteventID = " + req.params.teventid + " AND tournamentgoals_new.playerID <> 1) as owngoals, (SELECT COUNT(*) as opponentgoals FROM tournamentgoals_new WHERE tournamentgoals_new.tournamenteventID = " + req.params.teventid + " AND tournamentgoals_new.playerID = 1) as opponentgoals";
+connection.query(query, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/tournamentgoals_new/goals/:teventid/:playerid",function(req,res){
+connection.query("SELECT tournamentgoals_new.tournamentgoals_ID, tournamentgoals_new.timestamp, COALESCE(concat(players.first_name, ' ', players.last_name), 'none') as assist_name FROM tournamentgoals_new LEFT JOIN players ON tournamentgoals_new.assistID = players.player_ID WHERE tournamentgoals_new.tournamenteventID = ? AND tournamentgoals_new.playerID = ? ORDER BY tournamentgoals_new.timestamp ASC", [req.params.teventid, req.params.playerid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/tournamentgoals_new/gameresume/:teventid",function(req,res){
+connection.query("SELECT tournamentgoals_new.timestamp, tournamentgoals_new.playerID, concat(goalplayers.first_name, ' ', goalplayers.last_name) as player_name, COALESCE(concat(assistplayers.first_name, ' ', assistplayers.last_name), 'none') as assist_name FROM tournamentgoals_new LEFT JOIN players as assistplayers ON tournamentgoals_new.assistID = assistplayers.player_ID LEFT JOIN players as goalplayers ON tournamentgoals_new.playerID = goalplayers.player_ID WHERE tournamentgoals_new.tournamenteventID = ? ORDER BY tournamentgoals_new.timestamp ASC", req.params.teventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/tournamentgoals_new/gameassists/:teventid",function(req,res){
+connection.query("SELECT tournamentgoals_new.assistID, concat(players.first_name, ' ', players.last_name) as player_name, players.pic_url, COUNT(*) as assists FROM tournamentgoals_new LEFT JOIN players ON tournamentgoals_new.assistID = players.player_ID WHERE tournamentgoals_new.assistID > 2 AND tournamentgoals_new.tournamenteventID = ? GROUP BY tournamentgoals_new.assistID ORDER BY assists DESC", req.params.teventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/tournamentgoals_new/gamegoals/:teventid",function(req,res){
+connection.query("SELECT tournamentgoals_new.playerID, concat(players.first_name, ' ', players.last_name) as player_name, players.pic_url, COUNT(*) as goals FROM tournamentgoals_new LEFT JOIN players ON tournamentgoals_new.playerID = players.player_ID WHERE tournamentgoals_new.playerID > 2 AND tournamentgoals_new.tournamenteventID = ? GROUP BY tournamentgoals_new.playerID ORDER BY goals DESC", req.params.teventid, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.post("/tournamentgoals_new/new",function(req,res){
+  var post = {
+        tournamenteventID: req.body.tournamenteventid,
+        playerID: req.body.playerid,
+        assistID: req.body.assistid,
+        timestamp: req.body.timestamp,
+        teamID: req.body.teamid
+    };
+    console.log(post);
+connection.query('INSERT INTO tournamentgoals_new SET ?', post, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.delete("/tournamentgoals_new/:tgoalsid",function(req,res){
+  var data = {
+        tgoalsid: req.params.tgoalsid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM tournamentgoals_new WHERE tournamentgoals_ID = ?', data.tgoalsid, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
