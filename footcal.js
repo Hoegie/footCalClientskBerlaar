@@ -4563,7 +4563,12 @@ connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as p
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
-    res.end(JSON.stringify(rows));
+    outputArray[0]['group'] = "Players";
+    outputArray[0]['count'] = rows[0].players;
+    outputArray[1]['group'] = "Staff";
+    outputArray[1]['count'] = rows[0].staff;
+
+    res.end(JSON.stringify(outputArray));
   }else{
     console.log('Error while performing Query.');
   }
