@@ -4554,6 +4554,23 @@ fs.readFile(dir + data.filename, function(err,data){
 
 module.exports.exportapp = app;
 
+
+/*DASHBOARD*/
+
+
+app.get("/dashboard/playerstaffcount",function(req,res){
+connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as players, (SELECT COUNT(*) from staff) as staff', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
 /*
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
