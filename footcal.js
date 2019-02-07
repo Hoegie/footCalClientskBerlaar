@@ -4559,15 +4559,16 @@ module.exports.exportapp = app;
 
 
 app.get("/dashboard/playerstaffcount",function(req,res){
-  var outputArray = [];
+
 connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as players, (SELECT COUNT(*) from staff) as staff', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
-    outputArray[0]['group'] = "Players";
-    outputArray[0]['count'] = rows[0].players;
-    outputArray[1]['group'] = "Staff";
-    outputArray[1]['count'] = rows[0].staff;
+    var outputArray = [];
+    var outputDic = {"group": "Players", "count": rows[0].players}
+    outputArray.push(outputDic);
+    var outputDic2 = {"group": "Staff", "count": rows[0].staff}
+    outputArray.push(outputDic2);
 
     res.end(JSON.stringify(outputArray));
   }else{
