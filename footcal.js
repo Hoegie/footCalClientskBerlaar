@@ -4559,6 +4559,7 @@ module.exports.exportapp = app;
 
 
 app.get("/dashboard/playerstaffcount",function(req,res){
+  var outputArray = [];
 connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as players, (SELECT COUNT(*) from staff) as staff', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
