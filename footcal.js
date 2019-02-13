@@ -4552,14 +4552,11 @@ fs.readFile(dir + data.filename, function(err,data){
 });
 
 
-module.exports.exportapp = app;
-
 
 /*DASHBOARD*/
 
 
 app.get("/dashboard/playerstaffcount",function(req,res){
-
 connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as players, (SELECT COUNT(*) from staff) as staff', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
@@ -4577,6 +4574,26 @@ connection.query('SELECT (SELECT COUNT(*) from players WHERE player_ID > 2) as p
   });
 });
 
+
+
+app.get("/dashboard/teamplayers",function(req,res){
+connection.query("SELECT COUNT(players.player_ID) as count, COALESCE(teams.team_name,'No Team') as teamName FROM players LEFT JOIN teams ON teams.team_ID = players.teamID WHERE players.player_ID > 2 GROUP BY teamName", function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    var outputArray = [];
+    rows.forEach(function(row, i) {
+        var outputDic = {"team" : row.teamName, "count" : row.count};
+        outputArray.push(outputDic);
+    });
+    
+    res.send(JSON.stringify(outputArray));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+module.exports.exportapp = app;
 
 /*
 http.createServer(app).listen(app.get('port'), function(){
