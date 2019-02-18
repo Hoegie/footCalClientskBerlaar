@@ -4654,6 +4654,44 @@ connection.query("SELECT teams.team_name, ((SELECT COALESCE(SUM(results.homegoal
   });
 });
 
+app.get("/dashboard/teamscorers/:eventtype/:teamname",function(req,res){
+switch(req.params.eventtype){
+  case 'All':
+    req.params.eventtype = '%';
+    break;
+  case 'Comp':
+    req.params.eventtype = 'Comp. Match';
+    break;
+  case 'Friend':
+    req.params.eventtype = 'Vriend. Match';
+    break;
+  case 'Vacla':
+    req.params.eventtype = 'Vacla';
+    break;
+  default:
+    req.params.eventtype = '%';
+
+}
+
+connection.query("SELECT teams.team_ID FROM teams WHERE teams.team_name = ?", req.params.teamname,function(err, rows, fields) {
+  if (!err){
+    var teamID = rows[0].team_ID;
+
+    connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.playerID = players.player_ID) as scoredgoals, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.assistID = players.player_ID) as assists FROM players WHERE players.player_ID > 2 GROUP BY players.last_name ORDER BY scoredgoals DESC", [req.params.eventtype,teamID,req.params.eventtype,teamID], function(err, rows, fields) {
+    /*connection.end();*/
+      if (!err){
+        console.log('The solution is: ', rows);
+        res.send(JSON.stringify(rows));
+      }else{
+        console.log('Error while performing Query2.');
+      }
+      });
+  } else {
+    console.log('Error while performing Query1.');
+  }
+});
+});
+
 module.exports.exportapp = app;
 
 /*
