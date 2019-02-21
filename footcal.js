@@ -4698,13 +4698,8 @@ connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as f
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
-    var outputArray = [];
-    rows.forEach(function(row, i) {
-        var outputDic = {"team" : row.teamName, "count" : row.count};
-        outputArray.push(outputDic);
-    });
     
-    res.send(JSON.stringify(outputArray));
+    res.send(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
   }
