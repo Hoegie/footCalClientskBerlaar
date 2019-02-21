@@ -4692,6 +4692,25 @@ connection.query("SELECT teams.team_ID FROM teams WHERE teams.team_name = ?", re
 });
 });
 
+app.get("/dashboard/playersearch/:playerstring",function(req,res){
+  var playerstring = '%' + req.params.playerstring + '%';
+connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname FROM players WHERE players.player_ID > 2 AND (players.first_name LIKE ? OR players.last_name LIKE ?)", [playerstring, playerstring], function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    var outputArray = [];
+    rows.forEach(function(row, i) {
+        var outputDic = {"team" : row.teamName, "count" : row.count};
+        outputArray.push(outputDic);
+    });
+    
+    res.send(JSON.stringify(outputArray));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 module.exports.exportapp = app;
 
 /*
