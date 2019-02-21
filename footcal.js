@@ -4196,6 +4196,38 @@ connection.query('DELETE FROM tournamentgoals_new WHERE tournamentgoals_ID = ?',
 });
 
 
+/*CLUB_EVENT_TYPES*/
+
+
+app.get("/clubeventtypes/all",function(req,res){
+  
+connection.query('SELECT * from club_event_types', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/clubeventtypes/:clubeventtypeid",function(req,res){
+  var put = {
+        weekoverview_visible: req.body.weekoverviewvisible,
+        active: req.body.active
+    };
+    console.log(put);
+  connection.query('UPDATE club_event_types SET ? WHERE club_event_type_ID = ?', [put, req.params.staffid], function(err,result) {
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 /*FILE UPLOAD*/
 
 app.post("/image/upload",function(req,res){
