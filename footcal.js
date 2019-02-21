@@ -4218,7 +4218,7 @@ app.put("/clubeventtypes/:clubeventtypeid",function(req,res){
         active: req.body.active
     };
     console.log(put);
-  connection.query('UPDATE club_event_types SET ? WHERE club_event_type_ID = ?', [put, req.params.staffid], function(err,result) {
+  connection.query('UPDATE club_event_types SET ? WHERE club_event_type_ID = ?', [put, req.params.clubeventtypeid], function(err,result) {
   if (!err){
     console.log(result);
     res.end(JSON.stringify(result));
