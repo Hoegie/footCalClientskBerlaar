@@ -4201,7 +4201,7 @@ connection.query('DELETE FROM tournamentgoals_new WHERE tournamentgoals_ID = ?',
 
 app.get("/clubeventtypes/all",function(req,res){
   
-connection.query('SELECT * from club_event_types', function(err, rows, fields) {
+connection.query('SELECT club_event_type_ID, club_event_name, active from club_event_types', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -4214,7 +4214,7 @@ connection.query('SELECT * from club_event_types', function(err, rows, fields) {
 
 app.put("/clubeventtypes/:clubeventtypeid",function(req,res){
   var put = {
-        weekoverview_visible: req.body.weekoverviewvisible,
+        //weekoverview_visible: req.body.weekoverviewvisible,
         active: req.body.active
     };
     console.log(put);
