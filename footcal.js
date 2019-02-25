@@ -4212,6 +4212,19 @@ connection.query('SELECT club_event_type_ID, club_event_name, active from club_e
   });
 });
 
+app.get("/clubeventtypes/active",function(req,res){
+  
+connection.query('SELECT club_event_name, event_type from club_event_types WHERE active = 1', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.put("/clubeventtypes/:clubeventtypeid",function(req,res){
   var put = {
         //weekoverview_visible: req.body.weekoverviewvisible,
