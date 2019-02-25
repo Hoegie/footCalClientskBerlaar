@@ -4199,9 +4199,10 @@ connection.query('DELETE FROM tournamentgoals_new WHERE tournamentgoals_ID = ?',
 /*CLUB_EVENT_TYPES*/
 
 
-app.get("/clubeventtypes/all",function(req,res){
+app.get("/clubeventtypes/all/:language",function(req,res){
+var query = 'SELECT club_event_type_ID, club_event_name_' + req.params.language + ', active from club_event_types';
   
-connection.query('SELECT club_event_type_ID, club_event_name, active from club_event_types', function(err, rows, fields) {
+connection.query(query, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -4212,9 +4213,10 @@ connection.query('SELECT club_event_type_ID, club_event_name, active from club_e
   });
 });
 
-app.get("/clubeventtypes/active",function(req,res){
-  
-connection.query('SELECT club_event_name, event_type from club_event_types WHERE active = 1', function(err, rows, fields) {
+
+app.get("/clubeventtypes/active/:language",function(req,res){
+var query = 'SELECT club_event_name_' + req.params.language + ', event_type from club_event_types WHERE active = 1';
+connection.query(query, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
