@@ -4217,7 +4217,7 @@ connection.query(query, function(err, rows, fields) {
 
 
 app.get("/clubeventtypes/active/:language",function(req,res){
-var query = 'SELECT club_event_name_' + req.params.language + ' as club_event_name, event_type from club_event_types WHERE active = 1';
+var query = 'SELECT club_event_type_ID, club_event_name_' + req.params.language + ' as club_event_name, event_type from club_event_types WHERE active = 1';
 connection.query(query, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
