@@ -2784,6 +2784,7 @@ connection.query(connquery, [data.teamid, data.year, data.eventtype], function(e
     res.end(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
+    console.log(err);
   }
   });
 });
