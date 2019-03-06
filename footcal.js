@@ -74,7 +74,7 @@ var apnProvider = new apn.Provider({
           keyId: 'AW53VE2WG7', // The Key ID of the p8 file (available at https://developer.apple.com/account/ios/certificate/key)
           teamId: '857J4HYVDU', // The Team ID of your Apple Developer Account (available at https://developer.apple.com/account/#/membership/)
       },
-      production: true // Set to true if sending a notification to a production iOS app
+      production: false // Set to true if sending a notification to a production iOS app
   });  
 //*************************************************************************
 
@@ -221,9 +221,10 @@ app.post("/footcal/iosgoallivepush",function(req,res){
 app.post("/footcal/iospushdatemove",function(req,res){
   var teamID = req.body.teamid;
   var body = req.body.body;
-  var oldeDate = req.body.olddate;
+  var oldDate = req.body.olddate;
   var newDate = req.body.newdate;
   var teamName = req.body.teamname;
+  var eventID = req.body.eventid;
   console.log("iospushdatemove gehit !");
   var notification4 = new apn.Notification();
   notification4.topic = 'be.degronckel.FootCal';
@@ -231,9 +232,9 @@ app.post("/footcal/iospushdatemove",function(req,res){
   notification4.sound = 'ping.aiff';
   notification4.titleLocKey = 'event moved';
   notification4.locKey = body;
-  notification4.locArgs = [oldeDate, newDate, teamName];
+  //notification4.locArgs = [oldDate, newDate, teamName];
   console.log(teamID);
-  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
@@ -244,9 +245,18 @@ app.post("/footcal/iospushdatemove",function(req,res){
             //notification4.titleLocArgs = [clubName];
             notification4.subtitle = "[" + clubName + "]";
           }
-          apnProvider.send(notification4, row.token).then(function(result) { 
-            console.log(result);
-          });
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows, fields){
+            if (!err){
+                notification4.locArgs = [oldDate, newDate, teamName, rows[0].club_event_name];
+                apnProvider.send(notification4, row.token).then(function(result) { 
+                  console.log(result);
+                });
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });  
+          
       });
     }else{
       console.log('Error while performing Query.');
