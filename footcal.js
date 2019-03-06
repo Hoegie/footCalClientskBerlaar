@@ -521,6 +521,7 @@ var sendTitle = "";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
+      console.log("Android tokens :");
       console.log(rows)
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
@@ -534,6 +535,9 @@ var sendTitle = "";
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
           connection.query(connquery2, function(err, rows2, fields){
             if (!err){
+                console.log("breakpoint :");
+                console.log(row.device_language);
+                console.log(body);
                 var locBody = androidtranslator[row.device_language][body];
                 locBody = locBody.replace("%1", olddate);
                 locBody = locBody.replace("%2", newdate);
