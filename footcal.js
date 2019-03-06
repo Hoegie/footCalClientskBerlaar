@@ -513,6 +513,7 @@ var teamName = req.body.teamname;
 var body = req.body.body;
 var olddate = req.body.olddate;
 var newdate = req.body.newdate;
+var eventID = req.body.eventid;
 var title = "event_moved";
 var sendTitle = "";
 
@@ -529,27 +530,36 @@ var sendTitle = "";
           }
         var locTitle = androidtranslator[row.device_language][sendTitle];
         locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
-        var locBody = androidtranslator[row.device_language][body];
-        locBody = locBody.replace("%1", olddate);
-        locBody = locBody.replace("%2", newdate);
-        locBody = locBody.replace("%3", teamName);
-        var fcmMessage = {
-          to: row.token,
-          notification: {
-            title: locTitle,
-            body: locBody,
-            sound: 'true'
-          }
-        };
-        console.log(fcmMessage);
-        
-        fcmSender.send(fcmMessage, function(err, response){
-        if (err) {
-          console.log("Something has gone wrong!" , err);
-        } else {
-         console.log("Successfully sent with response: ", response);
-        }
-        });
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                var locBody = androidtranslator[row.device_language][body];
+                locBody = locBody.replace("%1", olddate);
+                locBody = locBody.replace("%2", newdate);
+                locBody = locBody.replace("%3", teamName);
+                locBody = locBody.replace("%4", rows2[0].club_event_name);
+                var fcmMessage = {
+                  to: row.token,
+                  notification: {
+                    title: locTitle,
+                    body: locBody,
+                    sound: 'true'
+                  }
+                };
+                console.log(fcmMessage);
+                
+                fcmSender.send(fcmMessage, function(err, response){
+                if (err) {
+                  console.log("Something has gone wrong!" , err);
+                } else {
+                 console.log("Successfully sent with response: ", response);
+                }
+                });
+            } else {
+              console.log('Error while performing Query.');
+            }
+          }); 
       });
     }else{
       console.log('Error while performing Query.');
