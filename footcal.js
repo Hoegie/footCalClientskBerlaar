@@ -159,7 +159,10 @@ app.post("/footcal/iosanulpush2",function(req,res){
 
           if (clubID != row.active_clubID){
             notification2.subtitle = "[" + clubName + "]";
+          } else {
+            notification2.subtitle = "";
           }
+
           var locTitle = androidtranslator[row.device_language][title];
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
