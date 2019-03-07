@@ -1024,6 +1024,7 @@ connection.query("SELECT events.referee, events.teamID, club_event_types.club_ev
     });/*teaminfoquery*/
   }else{
     console.log('Error while performing Query.4');
+    console.log(err);
     var outputArray = [];
               var outputDic = {
                    response: "failed"
