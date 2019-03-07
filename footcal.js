@@ -139,6 +139,53 @@ app.post("/footcal/iosanulpush",function(req,res){
  });
 });
 
+app.post("/footcal/iosanulpush2",function(req,res){
+  var teamID = req.body.teamid;
+  var date = req.body.date;
+  var teamName = req.body.teamname;
+  var eventID = req.body.eventid;
+  var title = "annulation";
+  var notification2 = new apn.Notification();
+  notification2.topic = 'be.degronckel.FootCal';
+  notification2.expiry = Math.floor(Date.now() / 1000) + 3600;
+  notification2.sound = 'ping.aiff';
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+          if (clubID != row.active_clubID){
+            notification2.subtitle = "[" + clubName + "]";
+          }
+          var locTitle = androidtranslator[row.device_language][title];
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                
+                notification2.title = locTitle;
+                notification2.body = date + " " + teamName + " " + rows2[0].club_event_name;
+
+                apnProvider.send(notification2, row.token).then(function(result) { 
+                console.log(result);
+                console.log(result.failed);
+                });
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });   
+
+          
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
 
 app.post("/footcal/ioslivepush",function(req,res){
   var teamID = req.body.teamid;
