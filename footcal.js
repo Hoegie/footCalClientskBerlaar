@@ -373,7 +373,7 @@ app.post("/footcal/androidanulpush",function(req,res){
 var teamID = req.body.teamid;
 var date = req.body.date;
 var teamName = req.body.teamname;
-var eventID = req.body.evenid;
+var eventID = req.body.eventid;
 var title = "annulation";
 console.log(teamID);
 
