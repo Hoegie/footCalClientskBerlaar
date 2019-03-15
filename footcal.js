@@ -1602,6 +1602,17 @@ connection.query("UPDATE settings SET ? WHERE settings_ID = 1", put, function(er
   });
 });
 
+app.put("/settings/eventtypechange",function(req,res){
+connection.query("UPDATE settings SET eventTypeChanger = eventTypeChanger + 1 WHERE settings_ID = 1", function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 /*PHP ACCOUNTS*/
 
