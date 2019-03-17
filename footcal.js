@@ -4763,23 +4763,7 @@ connection.query("SELECT COUNT(players.player_ID) as count, COALESCE(teams.team_
 
 
 app.get("/dashboard/teamresults/:eventtype",function(req,res){
-switch(req.params.eventtype){
-  case 'All':
-    req.params.eventtype = '%';
-    break;
-  case 'Comp':
-    req.params.eventtype = 'Comp. Match';
-    break;
-  case 'Friend':
-    req.params.eventtype = 'Vriend. Match';
-    break;
-  case 'Vacla':
-    req.params.eventtype = 'Vacla';
-    break;
-  default:
-    req.params.eventtype = '%';
-}
-connection.query("SELECT teams.team_name, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type LIKE ? AND results.homegoals > results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type LIKE ? AND results.homegoals < results.awaygoals AND events.teamID = teams.team_ID)) as wingames, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type LIKE ? AND results.homegoals < results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type LIKE ? AND results.homegoals > results.awaygoals AND events.teamID = teams.team_ID)) as lostgames, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type LIKE ? AND results.homegoals = results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type LIKE ? AND results.homegoals = results.awaygoals AND events.teamID = teams.team_ID)) as drawgames FROM teams GROUP BY teams.team_name", [req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype], function(err, rows, fields) {
+connection.query("SELECT REPLACE(teams.team_name,' ','') as team_name, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type = ? AND results.homegoals > results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type = ? AND results.homegoals < results.awaygoals AND events.teamID = teams.team_ID)) as wingames, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type = ? AND results.homegoals < results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type = ? AND results.homegoals > results.awaygoals AND events.teamID = teams.team_ID)) as lostgames, ((SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type = ? AND results.homegoals = results.awaygoals AND events.teamID = teams.team_ID) + (SELECT COUNT(results.result_ID) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type = ? AND results.homegoals = results.awaygoals AND events.teamID = teams.team_ID)) as drawgames FROM teams GROUP BY teams.team_name", [req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype], function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
