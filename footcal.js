@@ -4780,24 +4780,9 @@ connection.query("SELECT REPLACE(teams.team_name,' ','') as team_name, ((SELECT 
 
 
 app.get("/dashboard/teamgoals/:eventtype",function(req,res){
-switch(req.params.eventtype){
-  case 'All':
-    req.params.eventtype = '%';
-    break;
-  case 'Comp':
-    req.params.eventtype = 'Comp. Match';
-    break;
-  case 'Friend':
-    req.params.eventtype = 'Vriend. Match';
-    break;
-  case 'Vacla':
-    req.params.eventtype = 'Vacla';
-    break;
-  default:
-    req.params.eventtype = '%';
-
+if (req.params.eventtype == 'All'){
+  req.params.eventtype = '%';
 }
-
 connection.query("SELECT teams.team_name, ((SELECT COALESCE(SUM(results.homegoals),0) as homegoals1 FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type LIKE ? AND events.teamID = teams.team_ID) + (SELECT COALESCE(SUM(results.awaygoals),0) as awaygoals1 FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type LIKE ? AND events.teamID = teams.team_ID)) as goalsfor, ((SELECT COALESCE(SUM(results.awaygoals),0) as awaygoals2 FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'home' AND events.event_type LIKE ? AND events.teamID = teams.team_ID) + (SELECT COALESCE(SUM(results.homegoals),0) as winshome FROM results JOIN events ON events.event_ID = results.eventID WHERE events.match_type = 'away' AND events.event_type LIKE ? AND events.teamID = teams.team_ID)) as goalsagainst FROM teams GROUP BY teams.team_name", [req.params.eventtype,req.params.eventtype,req.params.eventtype,req.params.eventtype], function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
@@ -4809,25 +4794,11 @@ connection.query("SELECT teams.team_name, ((SELECT COALESCE(SUM(results.homegoal
   });
 });
 
+
 app.get("/dashboard/teamscorers/:eventtype/:teamname",function(req,res){
-switch(req.params.eventtype){
-  case 'All':
-    req.params.eventtype = '%';
-    break;
-  case 'Comp':
-    req.params.eventtype = 'Comp. Match';
-    break;
-  case 'Friend':
-    req.params.eventtype = 'Vriend. Match';
-    break;
-  case 'Vacla':
-    req.params.eventtype = 'Vacla';
-    break;
-  default:
-    req.params.eventtype = '%';
-
+if (req.params.eventtype == 'All'){
+  req.params.eventtype = '%';
 }
-
 connection.query("SELECT teams.team_ID FROM teams WHERE teams.team_name = ?", req.params.teamname,function(err, rows, fields) {
   if (!err){
     var teamID = rows[0].team_ID;
