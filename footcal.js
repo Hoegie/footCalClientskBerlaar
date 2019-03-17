@@ -4334,6 +4334,18 @@ connection.query(query, function(err, rows, fields) {
   });
 });
 
+app.get("/clubeventtypes/matches/active/:language",function(req,res){
+var query = 'SELECT club_event_type_ID, club_event_name_' + req.params.language + ' as club_event_name, event_type from club_event_types WHERE active = 1 AND (event_type LIKE "%game" OR event_type LIKE "cup")';
+connection.query(query, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.put("/clubeventtypes/:clubeventtypeid",function(req,res){
   var put = {
