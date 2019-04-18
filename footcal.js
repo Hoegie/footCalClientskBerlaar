@@ -2510,9 +2510,13 @@ connection.query('SELECT COUNT(*) as number from players WHERE player_ID > 2', f
 });
 
 app.post("/players/new",function(req,res){
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  firstname = firstname.replace("'","''");
+  lastname = lastname.replace("'","''");
   var post = {
-        first_name: req.body.firstname,
-        last_name: req.body.lastname,
+        first_name: firstname,
+        last_name: lastname,
         birth_date: req.body.birthdate,
         birth_place: req.body.birthplace
     };
