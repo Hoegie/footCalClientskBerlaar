@@ -2315,6 +2315,33 @@ connection.query('DELETE FROM staff WHERE staff_ID = ?', data.staffid, function(
   });
 });
 
+/*LINKED PLAYERS*/
+
+app.get("/linkedplayers/:accountid",function(req,res){
+connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as teamName FROM players INNER JOIN linkedPlayers on players.player_ID = linkedPlayers.playerID LEFT JOIN teams ON players.teamID = teams.team_ID WHERE linkedPlayers.accountID = ? ORDER BY LPAD(lower(teamName), 10,0) ASC, players.last_name ASC', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.get("/checklinkedadmin/:accountid/:playerid",function(req,res){
+connection.query('SELECT admin FROM linkedPlayers WHERE linkedPlayers.accountID = ? && linkedPlayers.playerID = ?', [req.params.accountid,req.params.playerid], function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 /*PLAYERS*/
 
 app.get("/players/all",function(req,res){
@@ -2329,17 +2356,6 @@ connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as te
   });
 });
 
-app.get("/linkedplayers/:accountid",function(req,res){
-connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as teamName FROM players INNER JOIN linkedPlayers on players.player_ID = linkedPlayers.playerID LEFT JOIN teams ON players.teamID = teams.team_ID WHERE linkedPlayers.accountID = ? ORDER BY LPAD(lower(teamName), 10,0) ASC, players.last_name ASC', req.params.accountid, function(err, rows, fields) {
-/*connection.end();*/
-  if (!err){
-    console.log('The solution is: ', rows);
-    res.end(JSON.stringify(rows));
-  }else{
-    console.log('Error while performing Query.');
-  }
-  });
-});
 
 app.get("/players/php/all",function(req,res){
 connection.query('SELECT players.player_ID, players.first_name, players.last_name, players.street, players.street_nr, players.postal_code, players.town, COALESCE(teams.team_name, "Geen Team") as teamName FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE players.player_ID > 2 ORDER BY LPAD(lower(teamName), 10,0) ASC, players.last_name ASC', function(err, rows, fields) {
