@@ -2365,7 +2365,8 @@ app.delete("/linkedplayers/:playerid/:accountid",function(req,res){
         playerid: req.params.playerid,
         accountid: req.params.accountid
     };
-    console.log(data.id);
+    console.log(data.playerid);
+    console.log(data.accountid);
 connection.query('DELETE FROM linkedPlayers WHERE playerID = ? AND accountID = ?', [data.playerid, data.accountid], function(err,result) {
 /*connection.end();*/
   if (!err){
