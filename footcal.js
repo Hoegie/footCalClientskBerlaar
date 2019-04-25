@@ -2342,6 +2342,40 @@ connection.query('SELECT admin FROM linkedPlayers WHERE linkedPlayers.accountID 
   });
 });
 
+app.post("/linkedplayers/new",function(req,res){
+  var post = {
+        accountID: req.body.accountid,
+        playerID: req.body.playerid,
+        admin: req.body.admin
+    };
+    console.log(post);
+connection.query("INSERT INTO linkedPlayers SET ?", post, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.delete("/linkedplayers/:playerid/:accountid",function(req,res){
+  var data = {
+        playerid: req.params.playerid,
+        accountid: req.params.accountid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM linkedPlayers WHERE playerID = ? AND accountID = ?', [data.playerid, data.accountid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+
 /*PLAYERS*/
 
 app.get("/players/all",function(req,res){
