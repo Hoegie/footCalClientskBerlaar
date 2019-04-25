@@ -2375,6 +2375,7 @@ connection.query('DELETE FROM linkedPlayers WHERE playerID = ? AND accountID = ?
     console.log('Error while performing Query.');
   }
   });
+});
 
 /*PLAYERS*/
 
