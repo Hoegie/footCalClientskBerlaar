@@ -2330,7 +2330,7 @@ connection.query('DELETE FROM staff WHERE staff_ID = ?', data.staffid, function(
 
 /*LINKED PLAYERS*/
 
-app.get("/linkedplayersid/:accountid",function(req,res){
+app.get("/linkedplayers/byaccount/:accountid",function(req,res){
 connection.query('SELECT playerID FROM linkedPlayers WHERE linkedPlayers.accountID = ?', req.params.accountid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
