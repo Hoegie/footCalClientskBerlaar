@@ -2330,6 +2330,18 @@ connection.query('DELETE FROM staff WHERE staff_ID = ?', data.staffid, function(
 
 /*LINKED PLAYERS*/
 
+app.get("/linkedplayersid/:accountid",function(req,res){
+connection.query('SELECT playerID FROM linkedPlayers WHERE linkedPlayers.accountID = ?', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.get("/linkedplayers/:accountid",function(req,res){
 connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as teamName FROM players INNER JOIN linkedPlayers on players.player_ID = linkedPlayers.playerID LEFT JOIN teams ON players.teamID = teams.team_ID WHERE linkedPlayers.accountID = ? ORDER BY LPAD(lower(teamName), 10,0) ASC, players.last_name ASC', req.params.accountid, function(err, rows, fields) {
 /*connection.end();*/
