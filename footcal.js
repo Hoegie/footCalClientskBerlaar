@@ -1,4 +1,4 @@
-//LIVE VERSION 5,2 incl advanced player login
+//LIVE VERSION 5,4 incl teams special login
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
