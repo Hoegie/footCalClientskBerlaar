@@ -2469,10 +2469,9 @@ connection.query('SELECT players.*, CONVERT(DATE_FORMAT(players.birth_date,"%d-%
   });
 });
 
-
+/*
 app.get("/players/teamid/:teamid",function(req,res){
 connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players where teamID = ? ORDER BY last_name', req.params.teamid, function(err, rows, fields) {
-/*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
     res.end(JSON.stringify(rows));
@@ -2481,7 +2480,18 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players 
   }
   });
 });
+*/
 
+app.get("/players/teamid/:teamid/:eventid",function(req,res){
+connection.query('SELECT player_ID, first_name, last_name, pic_url, COALESCE(event_presences.event_presence_ID, "none") as presenceID FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID AND event_presences.eventID = ? WHERE players.teamID = ? ORDER BY last_name', [req.params.eventid,req.params.teamid], function(err, rows, fields) {
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.get("/players/otherteam/teamid/:teamid",function(req,res){
 connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players where (teamID <> ?) AND (player_ID > 2) ORDER BY last_name', req.params.teamid, function(err, rows, fields) {
