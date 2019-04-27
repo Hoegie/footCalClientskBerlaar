@@ -3417,6 +3417,34 @@ connection.query('DELETE FROM events WHERE event_ID = ?', data.eventid, function
   });
 });
 
+
+/*EVENT PRESENCES*/
+
+app.get("/eventpresences/eventid/:eventid",function(req,res){
+connection.query('SELECT * FROM event_presences where eventID = ?', req.params.eventid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.get("/eventpresences/extraplayers/:eventid",function(req,res){
+connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = ? AND event_presences.extra_player = 1', req.params.eventid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 /*HOMELOCATIONS*/
 
 app.get("/homelocations/all",function(req,res){
