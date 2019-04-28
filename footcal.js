@@ -3444,11 +3444,34 @@ connection.query('SELECT * FROM event_presences where eventID = ?', req.params.e
 
 
 app.get("/eventpresences/extraplayers/:eventid",function(req,res){
-connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = ? AND event_presences.extra_player = 1', req.params.eventid, function(err, rows, fields) {
+connection.query('SELECT player_ID, first_name, last_name, pic_url, event_presences.event_presence_ID FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = ? AND event_presences.extra_player = 1', req.params.eventid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
     res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.post("/eventpresences/new",function(req,res){
+  var post = {
+        eventID: req.body.eventid,
+        playerID: req.body.playerid,
+        confirmed: req.body.confirmed,
+        declined: req.body.declined,
+        extra_player: req.body.extraplayer,
+        unselected: req.body.unselected,
+        trans_confirmed: req.body.transconfirmed,
+        trans_declined: req.body.transdeclined
+    };
+    console.log(post);
+connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
   }else{
     console.log('Error while performing Query.');
   }
