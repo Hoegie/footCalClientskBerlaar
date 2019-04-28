@@ -3467,11 +3467,18 @@ app.post("/eventpresences/new",function(req,res){
         trans_declined: req.body.transdeclined
     };
     console.log(post);
-connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
+connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [post.eventID, post.playerID], function(err,result) {
 /*connection.end();*/
   if (!err){
-    console.log(result);
-    res.end(JSON.stringify(result));
+    connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
+/*connection.end();*/
+      if (!err){
+        console.log(result);
+        res.end(JSON.stringify(result));
+      }else{
+        console.log('Error while performing Query.');
+      }
+    });
   }else{
     console.log('Error while performing Query.');
   }
