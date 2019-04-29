@@ -813,8 +813,8 @@ connection.query("SELECT events.referee, events.teamID, club_event_types.club_ev
 
   if (!err){
     var teamID = rows[0].teamID;
-    var confirms = "(" + rows[0].confirmed_players + ",1" + ",2" +")";
-    var confirms1 = "(" + rows[0].confirmed_players + ")";
+    //var confirms = "(" + rows[0].confirmed_players + ",1" + ",2" +")";
+    //var confirms1 = "(" + rows[0].confirmed_players + ")";
     var eventTypeDB = rows[0].event_type;
     var eventDateDB = rows[0].event_date;
     var eventTimeDB = rows[0].event_time;
@@ -857,7 +857,8 @@ connection.query("SELECT events.referee, events.teamID, club_event_types.club_ev
 
           /*playersquery*/  
           //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT goals.goals from goals WHERE goals.playerid = players.player_ID AND goals.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
-          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
+          //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = " + eventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
+          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = " + eventID + "), 0) as goals FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = " + eventID + " AND event_presences.confirmed = 1 GROUP BY players.last_name";
           connection.query(connquery, function(err, rows, fields) {
 
             if (!err){
