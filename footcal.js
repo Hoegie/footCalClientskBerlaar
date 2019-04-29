@@ -3445,7 +3445,7 @@ connection.query('SELECT * FROM event_presences where eventID = ?', req.params.e
 
 
 app.get("/eventpresences/extraplayers/:eventid",function(req,res){
-connection.query('SELECT player_ID, first_name, last_name, pic_url, event_presences.event_presence_ID FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = ? AND event_presences.extra_player = 1', req.params.eventid, function(err, rows, fields) {
+connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE event_presences.eventID = ? AND event_presences.extra_player = 1', req.params.eventid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -4273,6 +4273,16 @@ connection.query('SELECT * FROM tournamentevent_presences where tournamenteventI
   });
 });
 
+app.get("/tournamenteventpresences/extraplayers/:tournamenteventid",function(req,res){
+connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players LEFT JOIN tournamentevent_presences ON players.player_ID = tournamentevent_presences.playerID WHERE tournamentevent_presences.tournamenteventID = ? AND tournamentevent_presences.extra_player = 1', req.params.tournamenteventid, function(err, rows, fields) {
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.post("/tournamenteventpresences/new",function(req,res){
   var post = {
