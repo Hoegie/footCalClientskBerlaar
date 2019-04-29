@@ -4261,7 +4261,7 @@ connection.query('DELETE FROM tournamentevents WHERE tournamentevent_ID = ?', da
 
 /*TOURNAMENT EVENT PRESENCES*/
 
-app.get("/tournamenteventpresences/tournamenteventid/:eventid",function(req,res){
+app.get("/tournamenteventpresences/tournamenteventid/:tournamenteventid",function(req,res){
 connection.query('SELECT * FROM tournamentevent_presences where tournamenteventID = ?', req.params.tournamenteventid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
