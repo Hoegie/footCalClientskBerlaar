@@ -2469,7 +2469,7 @@ connection.query('SELECT players.*, CONVERT(DATE_FORMAT(players.birth_date,"%d-%
   });
 });
 
-/*
+
 app.get("/players/teamid/:teamid",function(req,res){
 connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players where teamID = ? ORDER BY last_name', req.params.teamid, function(err, rows, fields) {
   if (!err){
@@ -2480,8 +2480,8 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players 
   }
   });
 });
-*/
 
+/*
 app.get("/players/teamid/:teamid/:eventid",function(req,res){
 connection.query('SELECT player_ID, first_name, last_name, pic_url, COALESCE(event_presences.event_presence_ID, "none") as presenceID FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID AND event_presences.eventID = ? WHERE players.teamID = ? ORDER BY last_name', [req.params.eventid,req.params.teamid], function(err, rows, fields) {
   if (!err){
@@ -2492,6 +2492,7 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url, COALESCE(eve
   }
   });
 });
+*/
 
 app.get("/players/otherteam/teamid/:teamid",function(req,res){
 connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players where (teamID <> ?) AND (player_ID > 2) ORDER BY last_name', req.params.teamid, function(err, rows, fields) {
@@ -3479,6 +3480,23 @@ connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?
         console.log('Error while performing Query.');
       }
     });
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.delete("/eventpresences/:eventid/:playerid",function(req,res){
+  var data = {
+        eventid: req.params.eventid,
+        playerid: req.params.playerid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [data.eventid,data.playerid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
   }else{
     console.log('Error while performing Query.');
   }
