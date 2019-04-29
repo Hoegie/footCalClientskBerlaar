@@ -2506,7 +2506,7 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players 
   });
 });
 
-
+//will not be used anymore !!
 app.get("/confirmedplayergoals/eventid/:eventid",function(req,res){
 connection.query('SELECT confirmed_players FROM events where event_ID = ?', req.params.eventid, function(err, rows, fields) {
 /*connection.end();*/
@@ -2531,6 +2531,19 @@ connection.query('SELECT confirmed_players FROM events where event_ID = ?', req.
       var emptyArray = [];
       res.end(JSON.stringify(emptyArray));
     }
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+//this will replace the previous api route
+app.get("confirmedplayergoalsnew/eventid/:eventid",function(req,res){
+
+connection.query('SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = ?), 0) as goals FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE (event_presences.eventID = ? AND event_presences.confirmed = 1) OR players.player_ID = 2 SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from goals_new WHERE goals_new.playerid = players.player_ID AND goals_new.eventID = 14), 0) as goals FROM players LEFT JOIN event_presences ON players.player_ID = event_presences.playerID WHERE (event_presences.eventID = 14 AND event_presences.confirmed = 1) OR players.player_ID = 2 GROUP BY players.last_name ORDER BY CASE WHEN players.player_ID = 2 THEN 1 ELSE 0 END, players.last_name', [req.params.eventid,req.params.eventid], function(err, rows, fields) {
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
   }
