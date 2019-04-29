@@ -1076,8 +1076,8 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
 
   if (!err){
     var teamID = rows[0].teamID;
-    var confirms = "(" + rows[0].confirmed_players + ",1" + ",2" +")";
-    var confirms1 = "(" + rows[0].confirmed_players + ")";
+    //var confirms = "(" + rows[0].confirmed_players + ",1" + ",2" +")";
+    //var confirms1 = "(" + rows[0].confirmed_players + ")";
     var eventTypeDB = "Tornooi Wedstrijd";
     var eventDateDB = rows[0].event_date;
     var eventTimeDB = rows[0].event_time;
@@ -1120,7 +1120,8 @@ connection.query("SELECT tournamentevents.referee, tournamentevents.teamID, tour
 
           /*playersquery*/  
           //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT tournamentgoals.goals from tournamentgoals WHERE tournamentgoals.playerid = players.player_ID AND tournamentgoals.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1;
-          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
+          //var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players where players.player_ID IN " + confirms1 + "GROUP BY players.last_name";
+          var connquery = "SELECT players.first_name as firstname, players.last_name as lastname, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = " + tournamentEventID + "), 0) as goals FROM players LEFT JOIN tournamentevent_presences ON players.player_ID = tournamentevent_presences.playerID WHERE tournamentevent_presences.tournamenteventID = " + tournamentEventID + " AND tournamentevent_presences.confirmed = 1 GROUP BY players.last_name";
           connection.query(connquery, function(err, rows, fields) {
 
             if (!err){
