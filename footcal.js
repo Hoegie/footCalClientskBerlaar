@@ -4259,6 +4259,66 @@ connection.query('DELETE FROM tournamentevents WHERE tournamentevent_ID = ?', da
   });
 });
 
+/*TOURNAMENT EVENT PRESENCES*/
+
+app.get("/tournamenteventpresences/tournamenteventid/:eventid",function(req,res){
+connection.query('SELECT * FROM tournamentevent_presences where tournamenteventID = ?', req.params.tournamenteventid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
+app.post("/tournamenteventpresences/new",function(req,res){
+  var post = {
+        tournamenteventID: req.body.tournamenteventid,
+        playerID: req.body.playerid,
+        confirmed: req.body.confirmed,
+        declined: req.body.declined,
+        extra_player: req.body.extraplayer,
+        unselected: req.body.unselected
+    };
+    console.log(post);
+connection.query('DELETE FROM tournamentevent_presences WHERE tournamenteventID = ? AND playerID = ?', [post.tournamenteventID, post.playerID], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    connection.query('INSERT INTO tournamentevent_presences SET ?', post, function(err,result) {
+/*connection.end();*/
+      if (!err){
+        console.log(result);
+        res.end(JSON.stringify(result));
+      }else{
+        console.log('Error while performing Query.');
+      }
+    });
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.delete("/tournamenteventpresences/:tournamenteventid/:playerid",function(req,res){
+  var data = {
+        tournamenteventid: req.params.tournamenteventid,
+        playerid: req.params.playerid
+    };
+    console.log(data.id);
+connection.query('DELETE FROM tournamentevent_presences WHERE tournamenteventID = ? AND playerID = ?', [data.tournamenteventid,data.playerid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 
 /*TOURNAMENTRESULTS*/
 
