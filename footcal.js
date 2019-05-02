@@ -319,6 +319,41 @@ app.post("/footcal/iospushdatemove",function(req,res){
  });
 });
 
+app.post("/footcal/iosselectionpush",function(req,res){
+  var playerID = req.body.playerid;
+  var body = req.body.body;
+  var title = req.body.title;
+  var playerName = req.body.playername;
+  var teamName = req.body.teamname;
+  var opponentName = req.body.opponentname;
+  var date = req.body.date;
+  
+  connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = 3 AND tokens.send = 1 AND tokens.device_type = 'Apple'", req.body.playerid, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+          var notification6 = new apn.Notification();
+          notification6.topic = 'be.degronckel.FootCal';
+          notification6.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification6.sound = 'ping.aiff';
+          notification6.titleLocKey = title;
+          notification6.locKey = body;
+          notification5.locArgs = [playerName, teamName, opponentName, date];
+
+          if (clubID != row.active_clubID){
+            notification6.subtitle = "[" + clubName + "]";
+          }
+          apnProvider.send(notification6, row.token).then(function(result) { 
+            console.log(result);
+          });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
 
 app.get("/skberlaar/iostestpush/:accountid",function(req,res){
   var accountID = req.params.accountid;
