@@ -340,7 +340,7 @@ app.post("/footcal/iosselectionpush",function(req,res){
           notification6.sound = 'ping.aiff';
           notification6.titleLocKey = title;
           notification6.locKey = body;
-          notification5.locArgs = [playerName, teamName, opponentName, date];
+          notification6.locArgs = [playerName, teamName, opponentName, date];
 
           if (clubID != row.active_clubID){
             notification6.subtitle = "[" + clubName + "]";
