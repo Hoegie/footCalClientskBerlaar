@@ -4,6 +4,7 @@ var mysql      = require('mysql');
 var bodyParser = require('body-parser');
 var apn = require('apn');
 var fcm = require('fcm-push');
+var admin = require("firebase-admin");
 var nodemailer = require('nodemailer');
 var ejs = require('ejs');
 var fs = require('fs');
@@ -409,6 +410,11 @@ app.get("/skberlaar/loctestpush",function(req,res){
 
 var fcmSender = new fcm('AAAAPK8iGGM:APA91bEJUBP-ilZOqYz_5roVMdx3KkjKC6Av5H-p3LsT9kb9Y1gBTNeQP76HBUj7ky7bc8h72E0nMaaSPUISf8Cp0sUvdyle0F2-aPsI1wafilUqGXlnIqHpk7bGBWuUKovH637ltoYl');
 
+var serviceAccount = require("/app/nodeprojects/github/keys/firebase-footcal-firebase-adminsdk-ut2e7-91293ddf03.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://fir-footcal.firebaseio.com"
+});
 
 /*ANDROID push messages*/
 
@@ -673,6 +679,60 @@ var sendTitle = "";
  });
 });
 
+app.post("/footcal/androidselectionpush",function(req,res){
+var playerID = req.body.playerid;
+var body = req.body.body;
+var title = req.body.title;
+var playerName = req.body.playername;
+var teamName = req.body.teamname;
+var opponentName = req.body.opponentname;
+var date = req.body.date;
+var sendTitle = "";
+
+  
+  connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
+    if (!err){
+      //res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+        if (clubID != row.active_clubID){
+            sendTitle = "club_" + title;
+          } else {
+            sendTitle = title;
+          }
+
+         var payload = {
+            notification: {
+              titleLocKey: title,
+              bodyLocKey: body,
+              bodyLocArgs: [playerName, teamName, opponentName, date],
+              sound: 'true'
+            }
+          };
+
+          var options = {
+            priority: "high",
+            timeToLive: 60 * 60 *24
+          };   
+
+
+        admin.messaging().sendToDevice(registrationToken, payload, options)
+          .then(function(response) {
+            console.log("Successfully sent message:", response);
+            res.end(JSON.stringify(response));
+          })
+          .catch(function(error) {
+            console.log("Error sending message:", error);
+            res.end(JSON.stringify(error));
+        });
+
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
 
 app.get("/footcal/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
