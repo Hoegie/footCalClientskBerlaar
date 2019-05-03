@@ -683,12 +683,13 @@ app.post("/footcal/androidselectionpush",function(req,res){
 var playerID = req.body.playerid;
 var body = req.body.body;
 var title = req.body.title;
-var playerName = req.body.playername;
-var teamName = req.body.teamname;
-var opponentName = req.body.opponentname;
-var date = req.body.date;
+var playerName = JSON.stringify(req.body.playername);
+var teamName = JSON.stringify(req.body.teamname);
+var opponentName = JSON.stringify(req.body.opponentname);
+var date = JSON.stringify(req.body.date);
 var sendTitle = "";
 
+console.log(playerName);
   
   connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
     if (!err){
