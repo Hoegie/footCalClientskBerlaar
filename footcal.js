@@ -717,7 +717,7 @@ var sendTitle = "";
           };   
 
 
-        admin.messaging().sendToDevice(registrationToken, payload, options)
+        admin.messaging().sendToDevice(row.token, payload, options)
           .then(function(response) {
             console.log("Successfully sent message:", response);
             res.end(JSON.stringify(response));
