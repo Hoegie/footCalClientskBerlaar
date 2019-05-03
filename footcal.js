@@ -690,6 +690,9 @@ var date = JSON.stringify(req.body.date);
 var sendTitle = "";
 
 console.log(playerName);
+var testarray = [playerName, teamName, opponentName, date];
+var testarraystring = JSON.stringify(testarray);
+console.log(testarraystring);
   
   connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
     if (!err){
@@ -707,7 +710,7 @@ console.log(playerName);
             notification: {
               titleLocKey: title,
               bodyLocKey: body,
-              bodyLocArgs: [playerName, teamName, opponentName, date],
+              bodyLocArgs: testarraystring,
               sound: 'true'
             }
           };
