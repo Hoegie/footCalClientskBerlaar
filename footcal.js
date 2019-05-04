@@ -815,7 +815,7 @@ var titleArgs = [];
                 
                 var payload = {
             notification: {
-              titleLocKey: sendtitle,
+              titleLocKey: sendTitle,
               titleLocArgs: titleArgs,
               bodyLocKey: body,
               bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
