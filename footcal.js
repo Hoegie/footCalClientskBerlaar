@@ -784,6 +784,73 @@ console.log(testarraystring);
  });
 });
 
+app.post("/footcal/androidlocationchangepush",function(req,res){
+var body = req.body.body;
+var title = req.body.title;
+var teamID = req.body.teamid;
+var eventID = req.body.eventid;
+var teamName = req.body.teamname;
+var date = req.body.date;
+var newLocationName = req.body.newlocationname;
+var sendTitle = "";
+var titleArgs = [];
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      //res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+        if (clubID != row.active_clubID){
+            sendTitle = "club_" + title;
+            titleArgs = JSON.stringify([clubName]);
+          } else {
+            sendTitle = title;
+          }
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                
+                var payload = {
+            notification: {
+              titleLocKey: sendtitle,
+              titleLocArgs: titleArgs,
+              bodyLocKey: body,
+              bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
+              sound: 'true'
+            }
+          };
+
+          var options = {
+            priority: "high",
+            timeToLive: 60 * 60 *24
+          };   
+
+
+        admin.messaging().sendToDevice(row.token, payload, options)
+          .then(function(response) {
+            console.log("Successfully sent message:", response);
+            res.end(JSON.stringify(response));
+          })
+          .catch(function(error) {
+            console.log("Error sending message:", error);
+            res.end(JSON.stringify(error));
+        });
+
+                
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
 app.get("/footcal/androidtestpush/:accountid",function(req,res){
 var accountID = req.params.accountid;
   connection.query("SELECT token from tokens WHERE device_type = 'Android' AND accountID = ?", req.params.accountid, function(err, rows, fields) {
