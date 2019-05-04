@@ -816,7 +816,7 @@ var titleArgs = [];
                 var payload = {
             notification: {
               titleLocKey: sendTitle,
-              titleLocArgs: titleArgs,
+              titleLocArgs: JSON.stringify(titleArgs),
               bodyLocKey: body,
               bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
               sound: 'true'
