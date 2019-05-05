@@ -856,6 +856,7 @@ var titleArgs = [];
           }
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          console.log(connquery2);
           connection.query(connquery2, function(err, rows2, fields){
             if (!err){
                 
@@ -887,7 +888,8 @@ var titleArgs = [];
 
                 
             } else {
-              console.log('Error while performing Query.');
+              console.log('Error while performing Query2.');
+              console.log(err);
             }
           });
       });
