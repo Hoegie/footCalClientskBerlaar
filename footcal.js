@@ -736,6 +736,7 @@ var date = req.body.date;
 var sendTitle = "";
 
 console.log(playerName);
+console.log(playerID);
 var testarray = [playerName, teamName, opponentName, date];
 var testarraystring = JSON.stringify(testarray);
 console.log(testarraystring);
