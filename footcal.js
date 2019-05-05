@@ -802,29 +802,26 @@ console.log(newLocationName);
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       //res.end(JSON.stringify(rows));
-      console.log(rows)
+      
       rows.forEach(function(row, i) {
 
         if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
-            titleArgs = JSON.stringify([clubName]);
+            titleArgs = "[" + clubName + "]";
           } else {
             sendTitle = title;
           }
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
-          console.log(connquery2);
           connection.query(connquery2, function(err, rows2, fields){
             if (!err){
-                console.log("query2");
-                console.log(rows2);
+                
                 var payload = {
             notification: {
               titleLocKey: sendTitle,
-              //titleLocArgs: JSON.stringify(titleArgs),
+              titleLocArgs: JSON.stringify(titleArgs),
               bodyLocKey: body,
-              //bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
-              bodyLocArgs: JSON.stringify([teamName, "Techniektraining", date, newLocationName]),
+              bodyLocArgs: JSON.stringify([teamName, rows2[0].club_event_name, date, newLocationName]),
               sound: 'true'
             }
           };
