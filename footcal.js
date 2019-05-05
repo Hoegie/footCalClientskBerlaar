@@ -785,6 +785,72 @@ console.log(testarraystring);
  });
 });
 
+app.post("/footcal/androidselectiontrainingpush",function(req,res){
+var playerID = req.body.playerid;
+var body = req.body.body;
+var title = req.body.title;
+var playerName = req.body.playername;
+var teamName = req.body.teamname;
+var eventID = req.body.eventid;
+var date = req.body.date;
+var sendTitle = "";
+var titleArgs = [];
+
+  connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
+    if (!err){
+      //res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+        if (clubID != row.active_clubID){
+            sendTitle = "club_" + title;
+            titleArgs = "[" + clubName + "]";
+          } else {
+            sendTitle = title;
+          }
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                
+                var payload = {
+            notification: {
+              titleLocKey: sendTitle,
+              titleLocArgs: JSON.stringify(titleArgs),
+              bodyLocKey: body,
+              bodyLocArgs: JSON.stringify([playerName, teamName, rows2[0].club_event_name, date]),
+              sound: 'true'
+            }
+          };
+
+          var options = {
+            priority: "high",
+            timeToLive: 60 * 60 *24
+          };   
+
+
+        admin.messaging().sendToDevice(row.token, payload, options)
+          .then(function(response) {
+            console.log("Successfully sent message:", response);
+            res.end(JSON.stringify(response));
+          })
+          .catch(function(error) {
+            console.log("Error sending message:", error);
+            res.end(JSON.stringify(error));
+        });
+
+                
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
 app.post("/footcal/androidlocationchangepush",function(req,res){
 var body = req.body.body;
 var title = req.body.title;
