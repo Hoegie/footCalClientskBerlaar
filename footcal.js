@@ -794,6 +794,9 @@ var date = req.body.date;
 var newLocationName = req.body.newlocationname;
 var sendTitle = "";
 var titleArgs = [];
+console.log(teamName);
+console.log(date);
+console.log(newLocationName);
 
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android'";
   connection.query(connquery, function(err, rows, fields) {
@@ -818,7 +821,8 @@ var titleArgs = [];
               titleLocKey: sendTitle,
               //titleLocArgs: JSON.stringify(titleArgs),
               bodyLocKey: body,
-              bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
+              //bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
+              bodyLocArgs: JSON.stringify(["U10A", "Techniektraining", date, newLocationName]),
               sound: 'true'
             }
           };
