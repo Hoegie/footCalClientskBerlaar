@@ -815,14 +815,14 @@ console.log(newLocationName);
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
           connection.query(connquery2, function(err, rows2, fields){
             if (!err){
-                
+                console.log(rows2.club_event_name);
                 var payload = {
             notification: {
               titleLocKey: sendTitle,
               //titleLocArgs: JSON.stringify(titleArgs),
               bodyLocKey: body,
               //bodyLocArgs: JSON.stringify([teamName, rows2.club_event_name, date, newLocationName]),
-              bodyLocArgs: JSON.stringify(["U10A", "Techniektraining", date, newLocationName]),
+              bodyLocArgs: JSON.stringify([teamName, "Techniektraining", date, newLocationName]),
               sound: 'true'
             }
           };
