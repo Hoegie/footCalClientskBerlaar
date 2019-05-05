@@ -356,6 +356,52 @@ app.post("/footcal/iosselectionpush",function(req,res){
  });
 });
 
+app.post("/footcal/iosselectiontrainingpush",function(req,res){
+  var playerID = req.body.playerid;
+  var body = req.body.body;
+  var title = req.body.title;
+  var playerName = req.body.playername;
+  var teamName = req.body.teamname;
+  var eventID = req.body.eventid;
+  var date = req.body.date;
+  
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+          var notification6 = new apn.Notification();
+          notification6.topic = 'be.degronckel.FootCal';
+          notification6.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification6.sound = 'ping.aiff';
+          notification6.titleLocKey = title;
+          notification6.locKey = body;
+          if (clubID != row.active_clubID){
+            notification6.subtitle = "[" + clubName + "]";
+          }
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                
+                notification6.locArgs = [playerName, teamName, rows2[0].club_event_name, date];
+
+                apnProvider.send(notification6, row.token).then(function(result) { 
+                  console.log(result);
+                });
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });     
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
 app.post("/footcal/ioslocationchangepush",function(req,res){
   var body = req.body.body;
   var title = req.body.title;
@@ -842,7 +888,7 @@ var date = req.body.date;
 var sendTitle = "";
 var titleArgs = [];
 
-  connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
+  connection.query("SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
     if (!err){
       //res.end(JSON.stringify(rows));
       console.log(rows)
