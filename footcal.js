@@ -2352,7 +2352,7 @@ connection.query('UPDATE userroles SET ? WHERE userrole_ID = ?', [put, req.param
 /*TEAMS*/
 
 app.get("/teams/all",function(req,res){
-connection.query('SELECT team_ID, team_name, team_series, team_division, assists FROM teams ORDER BY LPAD(lower(team_name), 10,0) ASC', function(err, rows, fields) {
+connection.query('SELECT team_ID, team_name, team_series, team_division, assists, trainingmod_allowed FROM teams ORDER BY LPAD(lower(team_name), 10,0) ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -2485,7 +2485,8 @@ app.put("/teams/edit/:teamid",function(req,res){
         Co_ID: req.body.CoID,
         team_division: req.body.teamdivision,
         team_series: req.body.teamseries,
-        assists: req.body.assists
+        assists: req.body.assists,
+        trainingmod_allowed: req.body.trainingmod
     };
     console.log(put);
 connection.query('UPDATE teams SET ? where team_ID = ?', [put, req.params.teamid], function(err,result) {
