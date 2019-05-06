@@ -2414,7 +2414,7 @@ connection.query('SELECT team_name, team_division, team_series FROM teams WHERE 
 });
 
 app.get("/teams/teamsettings/:teamid",function(req,res){
-connection.query('SELECT assists FROM teams WHERE team_ID = ?', req.params.teamid, function(err, rows, fields) {
+connection.query('SELECT assists, trainingmod_allowed, teampic_url FROM teams WHERE team_ID = ?', req.params.teamid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
