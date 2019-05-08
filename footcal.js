@@ -2525,6 +2525,21 @@ connection.query('UPDATE players SET teamID = 0 WHERE player_ID = ?', [req.param
   });
 });
 
+app.put("/teams/teampic/:teamid",function(req,res){
+var put = {
+    teampic_url: req.body.teampicurl
+};
+connection.query('UPDATE teams SET ? WHERE team_ID = ?', [put, req.params.teamid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 
 app.delete("/teams/:teamid",function(req,res){
   var data = {
