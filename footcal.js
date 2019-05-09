@@ -1905,7 +1905,8 @@ app.put("/php/settings",function(req,res){
         showWebsite: req.body.showwebsite,
         websiteUrl: req.body.websiteurl,
         showNotif: req.body.shownotif,
-        notifText: req.body.notiftext
+        notifText: req.body.notiftext,
+        advanced_player_login: req.body.advancedlogin
     };
     console.log(put);
 
