@@ -2938,7 +2938,8 @@ var connquery = "SELECT players.player_ID, players.first_name, players.last_name
 connection.query(connquery, function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
-    if (rows.count < 2){
+    console.log(rows.length);
+    if (rows.length < 2){
       var emptyArray = [];
       res.end(JSON.stringify(emptyArray));
     } else {
