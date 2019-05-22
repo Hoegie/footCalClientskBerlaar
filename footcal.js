@@ -83,6 +83,7 @@ var apnProvider = new apn.Provider({
 
 app.all("/*", function(req, res, next){
   console.log("all gehit !!");
+  console.log(req.url);
   var sourceAddress = req.connection.remoteAddress.toString();
 
   console.log(sourceAddress);
@@ -3089,6 +3090,42 @@ connection.query('UPDATE players SET ? WHERE player_ID = ?', [put, req.params.pl
   });
 });
 
+app.put("/players/deactivate",function(req,res){
+  connection.query('UPDATE players SET teamID = -1 WHERE player_ID = ?', req.body.playerid, function(err,result) {
+    if (!err){
+      console.log(result);
+      connection.query('SELECT accountID FROM linkedPlayers WHERE playerID = ?', req.body.playerid, function(err, rows, fields) {
+        if (!err){
+          console.log(rows);
+          rows.forEach(function(row,i){
+              connection.query('UPDATE accounts SET userroleID = 1, forced_logout = 1 WHERE account_ID = ?', row.accountID, function(err,result) {
+                if (!err){
+                  console.log(result);
+                  
+                }else{
+                  console.log('Error while performing 3th Query.');
+                }
+              });
+          });
+          connection.query('DELETE FROM linkedPlayers WHERE playerID = ?', req.body.playerid, function(err,result) {
+            if (!err){
+              console.log(result);
+              res.end(JSON.stringify(result));
+            }else{
+              console.log('Error while performing 4th Query.');
+            }
+          });
+
+        }else{
+          console.log('Error while performing 2nd Query.');
+        }
+      });
+
+    }else{
+      console.log('Error while performing 1st Query.');
+    }
+  });
+});
 
 app.delete("/players/:playerid",function(req,res){
   var data = {
