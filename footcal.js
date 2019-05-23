@@ -2142,6 +2142,17 @@ connection.query('SELECT COUNT(*) as number from accounts', function(err, rows, 
   });
 });
 
+app.get("/accounts/forcedlogout/:accountid",function(req,res){
+connection.query('SELECT forced_logout from accounts WHERE account_ID = ?', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.post("/accounts/new",function(req,res){
   var post = {
@@ -2215,7 +2226,7 @@ connection.query('UPDATE accounts SET logged_in = 1 WHERE account_ID = ?',req.pa
 });
 
 app.put("/accounts/logout/:id",function(req,res){
-connection.query('UPDATE accounts SET logged_in = 0 WHERE account_ID = ?',req.params.id, function(err,result) {
+connection.query('UPDATE accounts SET logged_in = 0, forced_logout = 0 WHERE account_ID = ?',req.params.id, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
