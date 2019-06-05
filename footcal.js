@@ -1755,14 +1755,20 @@ app.post("/apn/new",function(req,res){
         device_language: req.body.language
     };
     console.log(post);
-connection.query('INSERT INTO tokens SET ?', post, function(err,result) {
-/*connection.end();*/
-  if (!err){
-    console.log(result);
-    res.end(JSON.stringify(result.insertId));
-  }else{
-    console.log('Error while performing Query.');
-  }
+  connection.query('DELETE FROM tokens WHERE device_name = ? AND device_ID = ?', [req.body.devicename,req.body.deviceID], function(err,result) {
+    if (!err){
+      console.log(result);
+      connection.query('INSERT INTO tokens SET ?', post, function(err,result) {
+        if (!err){
+          console.log(result);
+          res.end(JSON.stringify(result.insertId));
+        }else{
+          console.log('Error while performing Query1.');
+        }
+      });
+    }else{
+      console.log('Error while performing Query1.');
+    }
   });
 });
 
