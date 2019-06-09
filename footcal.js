@@ -1,4 +1,4 @@
-//LIVE VERSION 5,4 incl teams special login
+//LIVE VERSION 6 go live version
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
