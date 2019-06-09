@@ -17,7 +17,7 @@ app.post("/",function(req,res){
   res.end(JSON.stringify("webhook successfull"));
   console.log("webhook successfull !!");
 
-  exec("sh /app/nodeprojects/github/skBerlaar/footcalhook.sh", function(error, stdout, stderr) {
+  exec("sh /app/nodeprojects/github/skBerlaar_dev/footcalhook.sh", function(error, stdout, stderr) {
                     // Log success in some manner
                     console.log( 'exec complete' );
             });
