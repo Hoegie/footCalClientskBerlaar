@@ -3287,10 +3287,23 @@ connection.query('SELECT players.player_ID FROM players WHERE teamID = ?', teamI
 
 
 app.post("/playersemail/new",function(req,res){
+  var owner;  
+  if (req.body.owner == "Speler" || req.body.owner == "Joueur"){
+      owner = "Player";
+  }
+  if (req.body.owner == "Moeder" || req.body.owner == "Mère"){
+      owner = "Mother";
+  }
+  if (req.body.owner == "Vader" || req.body.owner == "Père"){
+      owner = "Father";
+  }
+  if (req.body.owner == "Andere" || req.body.owner == "Autre"){
+      owner = "Other";
+  }
   var post = {
         playerID: req.body.playerid,
         email_address: req.body.emailaddress,
-        owner: req.body.owner
+        owner: owner
     };
     console.log(post);
 connection.query('INSERT INTO players_emails SET ?', post, function(err,result) {
@@ -3377,10 +3390,23 @@ connection.query('SELECT * FROM players_gsms where gsm_ID = ?', req.params.gsmid
 });
 
 app.post("/playersgsm/new",function(req,res){
+  var owner;  
+  if (req.body.owner == "Speler" || req.body.owner == "Joueur"){
+      owner = "Player";
+  }
+  if (req.body.owner == "Moeder" || req.body.owner == "Mère"){
+      owner = "Mother";
+  }
+  if (req.body.owner == "Vader" || req.body.owner == "Père"){
+      owner = "Father";
+  }
+  if (req.body.owner == "Andere" || req.body.owner == "Autre"){
+      owner = "Other";
+  }
   var post = {
         playerID: req.body.playerid,
         gsm_number: req.body.gsmnumber,
-        owner: req.body.owner
+        owner: owner
     };
     console.log(post);
 connection.query('INSERT INTO players_gsms SET ?', post, function(err,result) {
