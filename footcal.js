@@ -2368,6 +2368,76 @@ connection.query('UPDATE userroles SET ? WHERE userrole_ID = ?', [put, req.param
   });
 });
 
+
+/*USER ROLES PRIVELEGES*/
+
+app.get("/userroleprivs/all",function(req,res){
+connection.query('SELECT * FROM userrole_privs', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/userroleprivs/:rightslevel",function(req,res){
+connection.query('SELECT * FROM userrole_privs WHERE rights_level = ?',req.params.rightslevel, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.put("/userroleprivs/edit/:userroleprivid",function(req,res){
+  var put = {
+        SD1: req.body.sd1,
+        PR1: req.body.pr1,
+        GO1: req.body.go1
+        CM1: req.body.cm1,
+        T1: req.body.t1,
+        P1: req.body.p1,
+        OP1: req.body.op1,
+        CD1: req.body.cd1,
+        TD1 req.body.td1,
+        PD1 req.body.pd1,
+        OD1 req.body.od1,
+        CCI1 req.body.cci1,
+        MED1 req.body.med1,
+        GR1 req.body.gr1,
+        MGO1 req.body.td1,
+        LM1 req.body.lm1,
+        DR1 req.body.dr1,
+        RE1 req.body.re1,
+        I1 req.body.i1,
+        EA1 req.body.ea1,
+        LC1 req.body.lc1,
+        GR2 req.body.gr2,
+        CCM1 req.body.ccm1,
+        CT1 req.body.ct1,
+        CP1 req.body.cp1,
+        CO1 req.body.co1,
+        MTS1 req.body.mts1
+    };
+    console.log(put);
+connection.query('UPDATE userrole_privs SET ? where userrole_priv_ID = ?', [put, req.params.userroleprivid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
 /*TEAMS*/
 
 app.get("/teams/all",function(req,res){
