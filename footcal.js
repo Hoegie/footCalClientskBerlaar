@@ -2399,7 +2399,7 @@ app.put("/userroleprivs/edit/:userroleprivid",function(req,res){
   var put = {
         SD1: req.body.sd1,
         PR1: req.body.pr1,
-        GO1: req.body.go1
+        GO1: req.body.go1,
         CM1: req.body.cm1,
         T1: req.body.t1,
         P1: req.body.p1,
