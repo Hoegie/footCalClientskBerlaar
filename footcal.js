@@ -2437,9 +2437,9 @@ connection.query('UPDATE userrole_privs SET ? where userrole_priv_ID = ?', [put,
   });
 });
 
-app.put("/userroleprivs/update/:userroleprivid",function(req,res){
+app.put("/userroleprivs/update/:rightslevel",function(req,res){
   console.log(req.body);
-connection.query('UPDATE userrole_privs SET ? where userrole_priv_ID = ?', [req.body, req.params.userroleprivid], function(err,result) {
+connection.query('UPDATE userrole_privs SET ? where rights_level = ?', [req.body, req.params.rightslevel], function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
