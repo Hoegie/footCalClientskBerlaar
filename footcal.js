@@ -2437,6 +2437,18 @@ connection.query('UPDATE userrole_privs SET ? where userrole_priv_ID = ?', [put,
   });
 });
 
+app.put("/userroleprivs/update/:userroleprivid",function(req,res){
+  console.log(req.body);
+connection.query('UPDATE userrole_privs SET ? where userrole_priv_ID = ?', [req.body, req.params.userroleprivid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 /*TEAMS*/
 
