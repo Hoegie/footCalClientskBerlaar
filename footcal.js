@@ -2384,7 +2384,7 @@ connection.query('SELECT * FROM userrole_privs', function(err, rows, fields) {
 });
 
 app.get("/userroleprivs/:rightslevel",function(req,res){
-connection.query('SELECT * FROM userrole_privs WHERE rights_level = ?',req.params.rightslevel, function(err, rows, fields) {
+connection.query('SELECT SD1, PR1, GO1, CM1, T1, P1, OP1, CD1, TD1, PD1, OD1, CCI1, MED1, GR1, MGO1, LM1, DR1, RE1, I1, EA1, LC1, GR2, CCM1, CT1, CP1, CO1, MTS1 FROM userrole_privs WHERE rights_level = ?',req.params.rightslevel, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -2394,6 +2394,20 @@ connection.query('SELECT * FROM userrole_privs WHERE rights_level = ?',req.param
   }
   });
 });
+
+app.get("/userroleprivs/parents",function(req,res){
+connection.query('SELECT SD1, PR1, GO1, CM1, T1, P1, OP1, CD1, TD1, PD1, OD1, CCI1, MED1, GR1, MGO1, LM1, DR1, RE1, I1, EA1, LC1, GR2, CCM1, CT1, CP1, CO1, MTS1 FROM userrole_privs WHERE rights_level = 1 OR rights_level = 2 OR rights_level = 3', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
 
 app.put("/userroleprivs/edit/:userroleprivid",function(req,res){
   var put = {
