@@ -2875,6 +2875,30 @@ connection.query('SELECT admin FROM linkedPlayers WHERE linkedPlayers.accountID 
   });
 });
 
+app.get("/linkedplayers/teamid/extraright/:accountid",function(req,res){
+connection.query('SELECT DISTINCT players.teamID, MAX(linkedPlayers.admin) + 1 as extraright FROM linkedPlayers LEFT JOIN players ON linkedPlayers.playerID = players.player_ID WHERE linkedPlayers.accountID = ? GROUP BY players.teamID', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/linkedplayers/playerid/extraright/:accountid",function(req,res){
+connection.query('SELECT linkedPlayers.playerID, linkedPlayers.admin + 1 as extraright FROM linkedPlayers WHERE linkedPlayers.accountID = ?', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.post("/linkedplayers/new",function(req,res){
   var post = {
         accountID: req.body.accountid,
