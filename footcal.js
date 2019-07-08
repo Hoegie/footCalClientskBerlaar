@@ -2899,6 +2899,18 @@ connection.query('SELECT linkedPlayers.playerID, linkedPlayers.admin + 1 as extr
   });
 });
 
+app.get("/linkedplayers/maxright/:accountid",function(req,res){
+connection.query('SELECT COALESCE(MAX(Admin) + 1, 0) as maxadmin FROM linkedPlayers WHERE accountID = ?', req.params.accountid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.post("/linkedplayers/new",function(req,res){
   var post = {
         accountID: req.body.accountid,
