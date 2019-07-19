@@ -2567,6 +2567,18 @@ connection.query('SELECT COUNT(*) as number from teams', function(err, rows, fie
   });
 });
 
+app.get("/teams/reverseteamid/:teamid",function(req,res){
+connection.query('SELECT team_ID, team_name FROM teams WHERE team_ID <> ? ORDER BY LPAD(lower(team_name), 10,0) ASC', req.params.teamid, function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.post("/teams/new",function(req,res){
   var post = {
         team_name: req.body.teamname,
