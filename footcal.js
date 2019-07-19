@@ -2568,7 +2568,7 @@ connection.query('SELECT COUNT(*) as number from teams', function(err, rows, fie
 });
 
 app.get("/teams/reverseteamid/:teamid",function(req,res){
-connection.query('SELECT team_ID, team_name FROM teams WHERE team_ID <> ? ORDER BY LPAD(lower(team_name), 10,0) ASC', req.params.teamid, function(err, rows, fields) {
+connection.query('SELECT team_ID, team_name FROM teams WHERE team_ID <> ? AND EXISTS (SELECT 1 FROM players WHERE players.teamID = teams.team_ID) ORDER BY LPAD(lower(team_name), 10,0) ASC', req.params.teamid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
