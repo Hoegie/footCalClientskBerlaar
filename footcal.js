@@ -3431,7 +3431,8 @@ connection.query('SELECT players.player_ID FROM players WHERE teamID = ?', teamI
 
 
 app.post("/playersemail/new",function(req,res){
-  var owner;  
+  var owner;
+  owner = req.body.owner;
   if (req.body.owner == "Speler" || req.body.owner == "Joueur"){
       owner = "Player";
   }
