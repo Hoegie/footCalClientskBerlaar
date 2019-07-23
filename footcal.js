@@ -3535,7 +3535,8 @@ connection.query('SELECT * FROM players_gsms where gsm_ID = ?', req.params.gsmid
 });
 
 app.post("/playersgsm/new",function(req,res){
-  var owner;  
+  var owner;
+  owner = req.body.owner;
   if (req.body.owner == "Speler" || req.body.owner == "Joueur"){
       owner = "Player";
   }
