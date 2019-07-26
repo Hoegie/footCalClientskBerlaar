@@ -2396,7 +2396,7 @@ connection.query('SELECT userrole_priv_ID, rights_level, user_role, SD1, PR1, GO
 });
 
 app.get("/userroleprivs/part2",function(req,res){
-connection.query('SELECT serrole_priv_ID, rights_level, user_role, CM1, T1, P1, OP1, CD1, TD1, PD1, OD1, CCM1, CT1, CP1, CO1 FROM userrole_privs', function(err, rows, fields) {
+connection.query('SELECT userrole_priv_ID, rights_level, user_role, CM1, T1, P1, OP1, CD1, TD1, PD1, OD1, CCM1, CT1, CP1, CO1 FROM userrole_privs', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
