@@ -5750,11 +5750,12 @@ app.get("/dashboard/teamscorers/:eventtype/:teamname",function(req,res){
 if (req.params.eventtype == 'All'){
   req.params.eventtype = '%';
 }
+console.log(req.params.teamname);
 connection.query("SELECT teams.team_ID FROM teams WHERE teams.team_name = ?", req.params.teamname,function(err, rows, fields) {
   if (!err){
     var teamID = rows[0].team_ID;
-
-    connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.playerID = players.player_ID) as scoredgoals, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.assistID = players.player_ID) as assists FROM players WHERE players.player_ID > 2 AND players.teamID = ? GROUP BY players.last_name ORDER BY scoredgoals DESC", [req.params.eventtype,teamID,req.params.eventtype,teamID,teamID], function(err, rows, fields) {
+    console.log(teamID);
+    connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.playerID = players.player_ID) as scoredgoals, (SELECT COUNT(goals_new.goals_ID) as goals FROM goals_new JOIN events ON events.event_ID = goals_new.eventID WHERE events.event_type LIKE ? AND goals_new.teamID = ? AND goals_new.playerID > 2 AND goals_new.assistID = players.player_ID) as assists FROM players WHERE players.player_ID > 2 AND EXISTS (SELECT 1 FROM event_presences LEFT jOIN events ON event_presences.eventID = events.event_ID WHERE events.teamID = ? AND event_presences.confirmed = 1 AND event_presences.playerID = players.player_ID) GROUP BY players.last_name ORDER BY scoredgoals DESC", [req.params.eventtype,teamID,req.params.eventtype,teamID,teamID], function(err, rows, fields) {
     /*connection.end();*/
       if (!err){
         console.log('The solution is: ', rows);
