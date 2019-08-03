@@ -526,6 +526,8 @@ console.log(teamID);
       rows.forEach(function(row, i) {
         if (clubID != row.active_clubID){
             title = "club_annulation";
+          } else {
+            title = "annulation";
           }
         var locTitle = androidtranslator[row.device_language][title];
         locTitle = locTitle.replace("%1", "[" + clubName.toLowerCase() + "]");
