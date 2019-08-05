@@ -2518,6 +2518,18 @@ connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team
   });
 });
 
+app.get("/teams/php/all",function(req,res){
+connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling, team_order as Volgorde FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
+/*connection.end();*/
+  if (!err){
+    console.log('The solution is: ', rows);
+    res.end(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.get("/teams/accountid/:accountid",function(req,res){
 connection.query('SELECT DISTINCT team_ID, team_name, team_series, team_division, assists, trainingmod_allowed FROM teams INNER JOIN players ON teams.team_ID = players.teamID INNER JOIN linkedPlayers ON players.player_ID = linkedPlayers.playerID WHERE linkedPlayers.accountID = ? ORDER BY LPAD(lower(team_name), 10,0) ASC', req.params.accountid, function(err, rows, fields) {
 /*connection.end();*/
