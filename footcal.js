@@ -2493,7 +2493,7 @@ connection.query('UPDATE userrole_privs SET ? where rights_level = ?', [req.body
 /*TEAMS*/
 
 app.get("/teams/all",function(req,res){
-connection.query('SELECT team_ID, team_name, team_series, team_division, assists, trainingmod_allowed FROM teams ORDER BY LPAD(lower(team_name), 10,0) ASC', function(err, rows, fields) {
+connection.query('SELECT team_ID, team_name, team_series, team_division, assists, trainingmod_allowed FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
@@ -2503,22 +2503,9 @@ connection.query('SELECT team_ID, team_name, team_series, team_division, assists
   }
   });
 });
-
 
 
 app.get("/teams/php/all",function(req,res){
-connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling FROM teams ORDER BY LPAD(lower(Ploeg), 10,0) ASC', function(err, rows, fields) {
-/*connection.end();*/
-  if (!err){
-    console.log('The solution is: ', rows);
-    res.end(JSON.stringify(rows));
-  }else{
-    console.log('Error while performing Query.');
-  }
-  });
-});
-
-app.get("/teams/php2/all",function(req,res){
 connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling, team_order as Volgorde FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
