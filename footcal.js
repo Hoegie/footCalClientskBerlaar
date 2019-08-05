@@ -2518,7 +2518,7 @@ connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team
   });
 });
 
-app.get("/teams/php/all",function(req,res){
+app.get("/teams/php2/all",function(req,res){
 connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling, team_order as Volgorde FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
