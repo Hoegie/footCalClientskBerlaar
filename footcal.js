@@ -2730,6 +2730,20 @@ connection.query('UPDATE teams SET ? WHERE team_ID = ?', [put, req.params.teamid
   });
 });
 
+app.put("/teams/teamorder/:teamid",function(req,res){
+var put = {
+    team_order: req.body.teamorder
+};
+connection.query('UPDATE teams SET ? WHERE team_ID = ?', [put, req.params.teamid], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
 
 app.delete("/teams/:teamid",function(req,res){
   var data = {
