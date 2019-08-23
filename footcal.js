@@ -1,4 +1,4 @@
-//LIVE VERSION 6 go live version  
+//LIVE VERSION 7 (dayoverview) go live version  
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
@@ -5814,7 +5814,7 @@ connection.query("SELECT teams.team_ID FROM teams WHERE teams.team_name = ?", re
 
 app.get("/dashboard/playersearch/:playerstring",function(req,res){
   var playerstring = '%' + req.params.playerstring + '%';
-connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname FROM players WHERE players.player_ID > 2 AND (players.first_name LIKE ? OR players.last_name LIKE ?)", [playerstring, playerstring], function(err, rows, fields) {
+connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname, player_ID FROM players WHERE players.player_ID > 2 AND (players.first_name LIKE ? OR players.last_name LIKE ?)", [playerstring, playerstring], function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
