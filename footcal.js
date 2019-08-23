@@ -3077,7 +3077,7 @@ connection.query('SELECT players.first_name, players.last_name, CONVERT(DATE_FOR
 });
 
 app.get("/players/php/fullname/:fullname",function(req,res){
-connection.query('SELECT players.player_ID, players.first_name as "Naam", players.last_name as "Familienaam", players.street as "Straat", players.street_nr as "Nr", players.postal_code as "Postcode", players.town as "Woonplaats", COALESCE(teams.team_name, CASE WHEN teamID = 0 THEN "Geen Ploeg" ELSE "Niet Actief" END) as Ploeg FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE CONCAT(players.first_name, ' ', players.last_name) LIKE ?',req.params.fullname, function(err, rows, fields) {
+connection.query('SELECT players.player_ID, players.first_name as "Naam", players.last_name as "Familienaam", players.street as "Straat", players.street_nr as "Nr", players.postal_code as "Postcode", players.town as "Woonplaats", COALESCE(teams.team_name, CASE WHEN teamID = 0 THEN "Geen Ploeg" ELSE "Niet Actief" END) as Ploeg FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE CONCAT(players.first_name, " ", players.last_name) LIKE ?', req.params.fullname, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
