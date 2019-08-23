@@ -3026,7 +3026,7 @@ connection.query('DELETE FROM linkedPlayers WHERE playerID = ? AND accountID = ?
 /*PLAYERS*/
 
 app.get("/players/all",function(req,res){
-connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as teamName FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE players.player_ID > 2 ORDER BY LPAD(lower(teamName), 10,0) ASC, players.last_name ASC', function(err, rows, fields) {
+connection.query('SELECT players.*, COALESCE(teams.team_name, "Geen Team") as teamName FROM players LEFT JOIN teams ON players.teamID = teams.team_ID WHERE players.player_ID > 2 ORDER BY teams.team_order ASC, players.last_name ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
