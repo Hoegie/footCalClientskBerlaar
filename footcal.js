@@ -4832,7 +4832,7 @@ connection.query('SELECT players.player_ID, players.first_name, players.last_nam
 //this will replace the previous api route
 app.get("/confirmedplayergoalsnew/tournamenteventid/:teventid",function(req,res){
 
-connection.query('SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = ?), 0) as tournamentgoals FROM players LEFT JOIN tournamentevent_presences ON players.player_ID = tournamentevent_presences.playerID WHERE (tournamentevent_presences.tournamenteventID = ? AND tournamentevent_presences.confirmed = 1) OR players.player_ID = 2 GROUP BY CONCAT(players.last_name, ' ', players.first_name) ORDER BY CASE WHEN players.player_ID = 2 THEN 1 ELSE 0 END, players.last_name', [req.params.teventid,req.params.teventid], function(err, rows, fields) {
+connection.query("SELECT players.player_ID, players.first_name, players.last_name, players.pic_url, COALESCE((SELECT COUNT(*) from tournamentgoals_new WHERE tournamentgoals_new.playerid = players.player_ID AND tournamentgoals_new.tournamenteventID = ?), 0) as tournamentgoals FROM players LEFT JOIN tournamentevent_presences ON players.player_ID = tournamentevent_presences.playerID WHERE (tournamentevent_presences.tournamenteventID = ? AND tournamentevent_presences.confirmed = 1) OR players.player_ID = 2 GROUP BY CONCAT(players.last_name, ' ', players.first_name) ORDER BY CASE WHEN players.player_ID = 2 THEN 1 ELSE 0 END, players.last_name", [req.params.teventid,req.params.teventid], function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
     res.end(JSON.stringify(rows));
