@@ -4215,6 +4215,38 @@ connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?
   });
 });
 
+app.post("/eventpresences/new2",function(req,res){
+  var post = {
+        eventID: req.body.eventid,
+        playerID: req.body.playerid,
+        confirmed: req.body.confirmed,
+        declined: req.body.declined,
+        extra_player: req.body.extraplayer,
+        unselected: req.body.unselected,
+        selected: req.body.selected,
+        trans_confirmed: req.body.transconfirmed,
+        trans_declined: req.body.transdeclined
+    };
+    console.log(post);
+connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [post.eventID, post.playerID], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
+/*connection.end();*/
+      if (!err){
+        console.log(result);
+        res.end(JSON.stringify(result));
+      }else{
+        console.log('Error while performing Query.');
+      }
+    });
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+
 app.delete("/eventpresences/:eventid/:playerid",function(req,res){
   var data = {
         eventid: req.params.eventid,
@@ -5044,6 +5076,35 @@ app.post("/tournamenteventpresences/new",function(req,res){
         confirmed: req.body.confirmed,
         declined: req.body.declined,
         extra_player: req.body.extraplayer,
+        unselected: req.body.unselected
+    };
+    console.log(post);
+connection.query('DELETE FROM tournamentevent_presences WHERE tournamenteventID = ? AND playerID = ?', [post.tournamenteventID, post.playerID], function(err,result) {
+/*connection.end();*/
+  if (!err){
+    connection.query('INSERT INTO tournamentevent_presences SET ?', post, function(err,result) {
+/*connection.end();*/
+      if (!err){
+        console.log(result);
+        res.end(JSON.stringify(result));
+      }else{
+        console.log('Error while performing Query.');
+      }
+    });
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.post("/tournamenteventpresences/new2",function(req,res){
+  var post = {
+        tournamenteventID: req.body.tournamenteventid,
+        playerID: req.body.playerid,
+        confirmed: req.body.confirmed,
+        declined: req.body.declined,
+        extra_player: req.body.extraplayer,
+        selected: req.body.selected,
         unselected: req.body.unselected
     };
     console.log(post);
