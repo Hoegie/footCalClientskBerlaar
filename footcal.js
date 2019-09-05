@@ -321,7 +321,7 @@ app.post("/footcal/iospushdatemove",function(req,res){
  });
 });
 
-/*
+
 app.post("/footcal/iosselectionpush",function(req,res){
   var playerID = req.body.playerid;
   var body = req.body.body;
@@ -357,8 +357,8 @@ app.post("/footcal/iosselectionpush",function(req,res){
     }
  });
 });
-*/
 
+/*
 app.post("/footcal/iosselectionpush",function(req,res){
   var playerID = req.body.playerid;
   var body = req.body.body;
@@ -404,6 +404,7 @@ app.post("/footcal/iosselectionpush",function(req,res){
     }
  });
 });
+*/
 
 app.post("/footcal/iosselectiontrainingpush",function(req,res){
   var playerID = req.body.playerid;
