@@ -4250,14 +4250,14 @@ connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?
   });
 });
 
-app.post("/eventpresences/selectall/:teamid/:eventid",function(req,res){
-connection.query('SELECT player_ID FROM players where players.teamID = ?', req.params.teamid, function(err, rows, fields) {
+app.post("/eventpresences/selectall",function(req,res){
+connection.query('SELECT player_ID FROM players where players.teamID = ?', req.body.teamid, function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
     //res.end(JSON.stringify(rows));
     rows.forEach(function(row, i) {
           var post = {
-                eventID: req.params.eventid,
+                eventID: req.body.eventid,
                 playerID: row.player_ID,
                 selected: 1
           };
@@ -4266,7 +4266,7 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.p
             connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
               if (!err){
                 console.log(result);
-                res.end(JSON.stringify(result));
+                //res.end(JSON.stringify(result));
               }else{
                 console.log('Error while performing Query3.');
               }
@@ -4276,6 +4276,7 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.p
           }
           });
     });
+    res.end(JSON.stringify({insertId: 1}));
   }else{
     console.log('Error while performing Query1.');
   }
