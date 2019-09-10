@@ -4304,6 +4304,7 @@ app.delete("/eventpresences/reset/:eventid",function(req,res){
   var data = {
         eventid: req.params.eventid
     };
+    console.log(data);
 connection.query('DELETE FROM event_presences WHERE eventID = ?', data.eventid, function(err,result) {
   if (!err){
     console.log(result);
