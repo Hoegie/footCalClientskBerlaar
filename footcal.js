@@ -4250,6 +4250,37 @@ connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?
   });
 });
 
+app.post("/eventpresences/selectall/:teamid/:eventid",function(req,res){
+connection.query('SELECT player_ID FROM players where players.teamID = ?', req.params.teamid, function(err, rows, fields) {
+  if (!err){
+    console.log('The solution is: ', rows);
+    //res.end(JSON.stringify(rows));
+    rows.forEach(function(row, i) {
+          var post = {
+                eventID: req.params.eventid,
+                playerID: row.player_ID,
+                selected: 1
+          };
+          connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [post.eventID, post.playerID], function(err,result) {
+          if (!err){
+            connection.query('INSERT INTO event_presences SET ?', post, function(err,result) {
+              if (!err){
+                console.log(result);
+                res.end(JSON.stringify(result));
+              }else{
+                console.log('Error while performing Query3.');
+              }
+            });
+          }else{
+            console.log('Error while performing Query2.');
+          }
+          });
+    });
+  }else{
+    console.log('Error while performing Query1.');
+  }
+});
+});
 
 app.delete("/eventpresences/:eventid/:playerid",function(req,res){
   var data = {
@@ -4259,6 +4290,20 @@ app.delete("/eventpresences/:eventid/:playerid",function(req,res){
     console.log(data.id);
 connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [data.eventid,data.playerid], function(err,result) {
 /*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.delete("/eventpresences/reset/:eventid",function(req,res){
+  var data = {
+        eventid: req.params.eventid
+    };
+connection.query('DELETE FROM event_presences WHERE eventID = ?', data.eventid, function(err,result) {
   if (!err){
     console.log(result);
     res.end(JSON.stringify(result));
