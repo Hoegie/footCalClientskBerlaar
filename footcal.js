@@ -4283,6 +4283,22 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.b
 });
 });
 
+app.post("/eventpresences/reset/:eventid",function(req,res){
+  var data = {
+        eventid: req.params.eventid
+    };
+    console.log(data);
+    console.log(data.eventid);
+connection.query('DELETE FROM event_presences WHERE eventID = ?', data.eventid, function(err,result) {
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
 app.delete("/eventpresences/:eventid/:playerid",function(req,res){
   var data = {
         eventid: req.params.eventid,
@@ -4300,20 +4316,6 @@ connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?
   });
 });
 
-app.delete("/eventpresences/reset/:eventid",function(req,res){
-  var data = {
-        eventid: req.params.eventid
-    };
-    console.log(data);
-connection.query('DELETE FROM event_presences WHERE eventID = ?', data.eventid, function(err,result) {
-  if (!err){
-    console.log(result);
-    res.end(JSON.stringify(result));
-  }else{
-    console.log('Error while performing Query.');
-  }
-  });
-});
 
 /*HOMELOCATIONS*/
 
