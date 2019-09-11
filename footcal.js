@@ -902,7 +902,7 @@ var titleArgs = [];
 
         if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
-            titleArgs = ["[" + clubName + "]"];
+            titleArgs = JSON.stringify([clubName]);
           } else {
             sendTitle = title;
           }
@@ -917,7 +917,7 @@ var titleArgs = [];
                 var payload = {
             notification: {
               titleLocKey: sendTitle,
-              titleLocArgs: JSON.stringify(titleArgs),
+              titleLocArgs: titleArgs,
               bodyLocKey: body,
               bodyLocArgs: JSON.stringify([playerName, teamName, rows2[0].club_event_name, date]),
               sound: 'true'
