@@ -893,6 +893,7 @@ var eventID = req.body.eventid;
 var date = req.body.date;
 var sendTitle = "";
 var titleArgs = [];
+var clubNameBracket = "[" + clubName + "]";
 
   connection.query("SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
     if (!err){
@@ -902,7 +903,7 @@ var titleArgs = [];
 
         if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
-            titleArgs = JSON.stringify([clubName]);
+            titleArgs = JSON.stringify([clubNameBracket]);
           } else {
             sendTitle = title;
           }
