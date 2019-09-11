@@ -5186,11 +5186,11 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.b
     //res.end(JSON.stringify(rows));
     rows.forEach(function(row, i) {
           var post = {
-                eventID: req.body.eventid,
+                tournamenteventID: req.body.tournamenteventid,
                 playerID: row.player_ID,
                 selected: 1
           };
-          connection.query('DELETE FROM tournamentevent_presences WHERE eventID = ? AND playerID = ?', [post.eventID, post.playerID], function(err,result) {
+          connection.query('DELETE FROM tournamentevent_presences WHERE tournamenteventID = ? AND playerID = ?', [post.tournamenteventID, post.playerID], function(err,result) {
           if (!err){
             connection.query('INSERT INTO tournamentevent_presences SET ?', post, function(err,result) {
               if (!err){
@@ -5212,12 +5212,12 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.b
 });
 });
 
-app.post("/tournamenteventpresences/reset/:eventid",function(req,res){
+app.post("/tournamenteventpresences/reset/:tournamenteventid",function(req,res){
   var data = {
-        eventid: req.params.eventid
+        tournamenteventid: req.params.tournamenteventid
     };
     console.log(data);
-connection.query('DELETE FROM tournamentevent_presences WHERE eventID = ?', data.eventid, function(err,result) {
+connection.query('DELETE FROM tournamentevent_presences WHERE tournamenteventID = ?', data.tournamenteventid, function(err,result) {
   if (!err){
     console.log(result);
     res.end(JSON.stringify(result));
