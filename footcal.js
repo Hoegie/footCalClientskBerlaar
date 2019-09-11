@@ -831,12 +831,12 @@ var teamName = req.body.teamname;
 var opponentName = req.body.opponentname;
 var date = req.body.date;
 var sendTitle = "";
+var titleArgs = [];
+var clubNameBracket = "[" + clubName + "]";
 
-console.log(playerName);
-console.log(playerID);
+
 var testarray = [playerName, teamName, opponentName, date];
 var testarraystring = JSON.stringify(testarray);
-console.log(testarraystring);
   
   connection.query("SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
     if (!err){
@@ -846,13 +846,15 @@ console.log(testarraystring);
 
         if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
+            titleArgs = JSON.stringify([clubNameBracket]);
           } else {
             sendTitle = title;
           }
 
          var payload = {
             notification: {
-              titleLocKey: title,
+              titleLocKey: sendTitle,
+              titleLocArgs: titleArgs,
               bodyLocKey: body,
               bodyLocArgs: testarraystring,
               sound: 'true'
@@ -907,8 +909,6 @@ var clubNameBracket = "[" + clubName + "]";
           } else {
             sendTitle = title;
           }
-          console.log(sendTitle);
-          console.log(titleArgs);
           
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
           console.log(connquery2);
