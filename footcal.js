@@ -502,6 +502,11 @@ app.post("/footcal/iosextrainfoegamepush",function(req,res){
   var body = req.body.body;
   var teamName = req.body.teamname;
   var date = req.body.date;
+
+  console.log(teamID);
+  console.log(body);
+  console.log(teamName);
+  console.log(date);
   
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
@@ -1110,6 +1115,11 @@ var teamName = req.body.teamname;
 var date = req.body.date;
 var testarray = [teamName, date];
 var testarraystring = JSON.stringify(testarray);
+
+console.log(teamID);
+console.log(body);
+console.log(teamName);
+console.log(date);
 
 var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Android'";
 
