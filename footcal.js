@@ -1118,13 +1118,13 @@ var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, 
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
-
+          /*
           if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
             titleArgs = JSON.stringify([clubNameBracket]);
           } else {
             sendTitle = title;
-          }
+          }*/
 
          var payload = {
             notification: {
@@ -1171,13 +1171,13 @@ var date = req.body.date;
       //res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
-
+        /*
         if (clubID != row.active_clubID){
             sendTitle = "club_" + title;
             titleArgs = "[" + clubName + "]";
           } else {
             sendTitle = title;
-          }
+          }*/
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
           connection.query(connquery2, function(err, rows2, fields){
