@@ -497,6 +497,85 @@ app.post("/footcal/ioslocationchangepush",function(req,res){
  });
 });
 
+app.post("/footcal/iosextrainfoegamepush",function(req,res){
+  var teamID = req.body.teamid;
+  var body = req.body.body;
+  var teamName = req.body.teamname;
+  var date = req.body.date;
+  
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+          var notification6 = new apn.Notification();
+          notification6.topic = 'be.degronckel.FootCal';
+          notification6.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification6.sound = 'ping.aiff';
+          notification6.titleLocKey = 'extra info game %1$@ %2$@';
+          notification6.titleLocArgs = [teamName, date];
+          notification6.body = body;
+          
+          if (clubID != row.active_clubID){
+            notification6.subtitle = "[" + clubName + "]";
+          }
+
+          apnProvider.send(notification6, row.token).then(function(result) { 
+            console.log(result);
+          });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
+app.post("/footcal/iosextrainfoeventpush",function(req,res){
+  var teamID = req.body.teamid;
+  var eventID = req.body.eventid;
+  var body = req.body.body;
+  var teamName = req.body.teamname;
+  var date = req.body.date;
+  
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+            var notification4 = new apn.Notification();
+            notification4.topic = 'be.degronckel.FootCal';
+            notification4.expiry = Math.floor(Date.now() / 1000) + 3600;
+            notification4.sound = 'ping.aiff';
+            notification4.titleLocKey = 'extra info event %1$@ %2$@ %3$@';
+            notification4.body = body;
+
+          if (clubID != row.active_clubID){
+            notification4.subtitle = "[" + clubName + "]";
+          }
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows, fields){
+            if (!err){
+                notification4.titleLocArgs = [teamName, rows[0].club_event_name, date];
+                apnProvider.send(notification4, row.token).then(function(result) { 
+                  console.log(result);
+                });
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });  
+          
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
 app.get("/skberlaar/iostestpush/:accountid",function(req,res){
   var accountID = req.params.accountid;
   var notification2 = new apn.Notification();
@@ -992,6 +1071,123 @@ console.log(newLocationName);
               titleLocArgs: JSON.stringify(titleArgs),
               bodyLocKey: body,
               bodyLocArgs: JSON.stringify([teamName, rows2[0].club_event_name, date, newLocationName]),
+              sound: 'true'
+            }
+          };
+
+          var options = {
+            priority: "high",
+            timeToLive: 60 * 60 *24
+          };   
+
+
+        admin.messaging().sendToDevice(row.token, payload, options)
+          .then(function(response) {
+            console.log("Successfully sent message:", response);
+            res.end(JSON.stringify(response));
+          })
+          .catch(function(error) {
+            console.log("Error sending message:", error);
+            res.end(JSON.stringify(error));
+        });
+
+                
+            } else {
+              console.log('Error while performing Query.');
+            }
+          });
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
+app.post("/footcal/androidextrainfogamepush",function(req,res){
+var teamID = req.body.teamid;
+var body = req.body.body;
+var teamName = req.body.teamname;
+var date = req.body.date;
+var testarray = [teamName, date];
+var testarraystring = JSON.stringify(testarray);
+
+var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
+
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+          if (clubID != row.active_clubID){
+            sendTitle = "club_" + title;
+            titleArgs = JSON.stringify([clubNameBracket]);
+          } else {
+            sendTitle = title;
+          }
+
+         var payload = {
+            notification: {
+              titleLocKey: 'extra_info_game',
+              titleLocArgs: testarraystring,
+              body: body,
+              sound: 'true'
+            }
+          };
+
+          var options = {
+            priority: "high",
+            timeToLive: 60 * 60 *24
+          };   
+
+
+        admin.messaging().sendToDevice(row.token, payload, options)
+          .then(function(response) {
+            console.log("Successfully sent message:", response);
+            //res.end(JSON.stringify(response));
+          })
+          .catch(function(error) {
+            console.log("Error sending message:", error);
+            //res.end(JSON.stringify(error));
+        });
+
+      });
+    }else{
+      console.log('Error while performing Query.');
+    }
+ });
+});
+
+app.post("/footcal/androidextrainfoeventpush",function(req,res){
+var teamID = req.body.teamid;
+var eventID = req.body.eventid;
+var body = req.body.body;
+var teamName = req.body.teamname;
+var date = req.body.date;
+
+  var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Android'";
+  connection.query(connquery, function(err, rows, fields) {
+    if (!err){
+      //res.end(JSON.stringify(rows));
+      console.log(rows)
+      rows.forEach(function(row, i) {
+
+        if (clubID != row.active_clubID){
+            sendTitle = "club_" + title;
+            titleArgs = "[" + clubName + "]";
+          } else {
+            sendTitle = title;
+          }
+
+          var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
+          connection.query(connquery2, function(err, rows2, fields){
+            if (!err){
+                
+              var payload = {
+              notification: {
+              titleLocKey: 'extra_info_event',
+              titleLocArgs: JSON.stringify([teamName, rows2[0].club_event_name, date]),
+              body: body,
               sound: 'true'
             }
           };
