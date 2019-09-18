@@ -147,11 +147,7 @@ app.post("/footcal/iosanulpush2",function(req,res){
   var teamName = req.body.teamname;
   var eventID = req.body.eventid;
   var title = "annulation";
-  var notification2 = new apn.Notification();
-  notification2.topic = 'be.degronckel.FootCal';
-  notification2.expiry = Math.floor(Date.now() / 1000) + 3600;
-  notification2.sound = 'ping.aiff';
-
+  
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID, tokens.device_language FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
@@ -159,17 +155,18 @@ app.post("/footcal/iosanulpush2",function(req,res){
       console.log(rows)
       rows.forEach(function(row, i) {
 
+          var notification2 = new apn.Notification();
+          notification2.topic = 'be.degronckel.FootCal';
+          notification2.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification2.sound = 'ping.aiff';
+
           if (clubID != row.active_clubID){
             notification2.subtitle = "[" + clubName + "]";
-          } else {
-            notification2.subtitle = "";
-          }
+          } 
 
           console.log("active clubeID :" + row.active_clubID);
           console.log(notification2.subtitle);  
-
-
-
+          
           var locTitle = androidtranslator[row.device_language][title];
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
