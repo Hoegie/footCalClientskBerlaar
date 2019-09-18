@@ -199,13 +199,8 @@ app.post("/footcal/ioslivepush",function(req,res){
   var body = req.body.body;
   var title = req.body.title;
   var teamName = req.body.teamname;
-  var notification3 = new apn.Notification();
-  notification3.topic = 'be.degronckel.FootCal';
-  notification3.expiry = Math.floor(Date.now() / 1000) + 3600;
-  notification3.sound = 'ping.aiff';
-  notification3.titleLocKey = title;
-  notification3.titleLocArgs = [teamName];
-  notification3.body = body;
+  
+
   console.log("ioslivepush gehit !!");
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
@@ -213,6 +208,13 @@ app.post("/footcal/ioslivepush",function(req,res){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          var notification3 = new apn.Notification();
+          notification3.topic = 'be.degronckel.FootCal';
+          notification3.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification3.sound = 'ping.aiff';
+          notification3.titleLocKey = title;
+          notification3.titleLocArgs = [teamName];
+          notification3.body = body;
           if (clubID != row.active_clubID){
             //notification3.titleLocKey = "%2$@ " + title;
             //notification3.titleLocArgs = [teamName,clubName];
@@ -237,18 +239,7 @@ app.post("/footcal/iosgoallivepush",function(req,res){
   var assistName = req.body.assistname;
   var homeGoals = req.body.homegoals;
   var awayGoals = req.body.awaygoals;
-  var notification5 = new apn.Notification();
-  notification5.topic = 'be.degronckel.FootCal';
-  notification5.expiry = Math.floor(Date.now() / 1000) + 3600;
-  notification5.sound = 'ping.aiff';
-  notification5.titleLocKey = title;
-  notification5.titleLocArgs = [teamName];
-  notification5.locKey = body;
-  if (assistName != "none"){
-    notification5.locArgs = [playerName, assistName, homeGoals, awayGoals];
-  } else {
-    notification5.locArgs = [playerName, homeGoals, awayGoals];
-  }
+  
   console.log("ioslivegoalpush gehit !!");
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.device_type = 'Apple' AND tokens.send_livemode = 1";
   connection.query(connquery, function(err, rows, fields) {
@@ -256,6 +247,18 @@ app.post("/footcal/iosgoallivepush",function(req,res){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          var notification5 = new apn.Notification();
+          notification5.topic = 'be.degronckel.FootCal';
+          notification5.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification5.sound = 'ping.aiff';
+          notification5.titleLocKey = title;
+          notification5.titleLocArgs = [teamName];
+          notification5.locKey = body;
+          if (assistName != "none"){
+            notification5.locArgs = [playerName, assistName, homeGoals, awayGoals];
+          } else {
+            notification5.locArgs = [playerName, homeGoals, awayGoals];
+          }
           if (clubID != row.active_clubID){
             //notification5.titleLocKey = "%2$@ " + title;
             //notification5.titleLocArgs = [teamName,clubName];
@@ -280,12 +283,7 @@ app.post("/footcal/iospushdatemove",function(req,res){
   var teamName = req.body.teamname;
   var eventID = req.body.eventid;
   console.log("iospushdatemove gehit !");
-  var notification4 = new apn.Notification();
-  notification4.topic = 'be.degronckel.FootCal';
-  notification4.expiry = Math.floor(Date.now() / 1000) + 3600;
-  notification4.sound = 'ping.aiff';
-  notification4.titleLocKey = 'event moved';
-  notification4.locKey = body;
+  
   //notification4.locArgs = [oldDate, newDate, teamName];
   console.log(teamID);
   var connquery = "SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN accounts ON tokens.accountID = accounts.account_ID WHERE accounts.favorites REGEXP '[[:<:]]" + teamID + "[[:>:]]' AND tokens.send = 1 AND tokens.send_anul = 1 AND tokens.device_type = 'Apple'";
@@ -294,6 +292,12 @@ app.post("/footcal/iospushdatemove",function(req,res){
       res.end(JSON.stringify(rows));
       console.log(rows)
       rows.forEach(function(row, i) {
+          var notification4 = new apn.Notification();
+          notification4.topic = 'be.degronckel.FootCal';
+          notification4.expiry = Math.floor(Date.now() / 1000) + 3600;
+          notification4.sound = 'ping.aiff';
+          notification4.titleLocKey = 'event moved';
+          notification4.locKey = body;
           if (clubID != row.active_clubID){
             //notification4.titleLocKey = "%1$@ event moved";
             //notification4.titleLocArgs = [clubName];
