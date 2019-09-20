@@ -4400,12 +4400,17 @@ connection.query('SELECT player_ID, first_name, last_name, pic_url FROM players 
 });
 
 app.post("/eventpresences/new",function(req,res){
+  var selected = "0";
+  if (req.body.unselected == "0" && req.body.extraplayer == "0"){
+      selected = "1";
+  }
   var post = {
         eventID: req.body.eventid,
         playerID: req.body.playerid,
         confirmed: req.body.confirmed,
         declined: req.body.declined,
         extra_player: req.body.extraplayer,
+        selected: selected,
         unselected: req.body.unselected,
         trans_confirmed: req.body.transconfirmed,
         trans_declined: req.body.transdeclined
@@ -6200,6 +6205,17 @@ connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as f
   if (!err){
     console.log('The solution is: ', rows);
     
+    res.send(JSON.stringify(rows));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
+
+app.get("/dashboard/teamattendees/:teamid",function(req,res){
+connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as fullname, (SELECT COUNT(event_presences.confirmed) FROM event_presences JOIN events ON event_presences.eventID = events.event_ID JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE event_presences.playerID = players.player_ID AND event_presences.confirmed = 1 AND event_presences.unselected <> 1 AND club_event_types.event_type = 'training') as confirmedTrainings, (SELECT COUNT(event_presences.confirmed) FROM event_presences JOIN events ON event_presences.eventID = events.event_ID JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE event_presences.playerID = players.player_ID AND event_presences.confirmed = 1 AND event_presences.unselected <> 1 AND club_event_types.event_type <> 'training') as confirmedGames, (SELECT COUNT(event_presences.confirmed) FROM event_presences JOIN events ON event_presences.eventID = events.event_ID JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE event_presences.playerID = players.player_ID AND event_presences.declined = 1 AND event_presences.unselected <> 1 AND club_event_types.event_type = 'training') as declinedTrainings, (SELECT COUNT(event_presences.confirmed) FROM event_presences JOIN events ON event_presences.eventID = events.event_ID JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE event_presences.playerID = players.player_ID AND event_presences.declined = 1 AND event_presences.unselected <> 1 AND club_event_types.event_type <> 'training') as declinedGames FROM players WHERE players.teamID = 1", req.params.teamid, function(err, rows, fields) {
+  if (!err){
+    console.log('The solution is: ', rows);
     res.send(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
