@@ -916,7 +916,7 @@ var teamName = req.body.teamname;
 var opponentName = req.body.opponentname;
 var date = req.body.date;
 var sendTitle = "";
-var titleArgs = [];
+var titleArgs = JSON.stringify([""]);
 var clubNameBracket = "[" + clubName + "]";
 
 
@@ -979,7 +979,7 @@ var teamName = req.body.teamname;
 var eventID = req.body.eventid;
 var date = req.body.date;
 var sendTitle = "";
-var titleArgs = [];
+var titleArgs = JSON.stringify([""]);
 var clubNameBracket = "[" + clubName + "]";
 
   connection.query("SELECT tokens.accountID, tokens.token, tokens.device_language, tokens.active_clubID FROM tokens LEFT JOIN linkedPlayers ON tokens.accountID = linkedPlayers.accountID WHERE linkedPlayers.playerID = ? AND tokens.send = 1 AND tokens.device_type = 'Android'", req.body.playerid, function(err, rows, fields) {
