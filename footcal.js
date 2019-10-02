@@ -6224,7 +6224,7 @@ connection.query("SELECT CONCAT(players.first_name, ' ', players.last_name) as f
 });
 
 app.get("/dashboard/trainingcount/:teamid/:date",function(req,res){
-connection.query("SELECT COUNT(*) from events JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.date < ? AND events.teamID = ? AND club_event_types.event_type = 'training' AND events.annulation = 0", [req.params.date,req.params.teamid], function(err, rows, fields) {
+connection.query("SELECT COUNT(*) as trainings from events JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.date < ? AND events.teamID = ? AND club_event_types.event_type = 'training' AND events.annulation = 0", [req.params.date,req.params.teamid], function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
     res.send(JSON.stringify(rows));
@@ -6235,7 +6235,7 @@ connection.query("SELECT COUNT(*) from events JOIN club_event_types ON club_even
 });
 
 app.get("/dashboard/gamescount/:teamid/:date",function(req,res){
-connection.query("SELECT COUNT(*) from events JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.date < ? AND events.teamID = ? AND club_event_types.event_type <> 'training' AND events.annulation = 0", [req.params.date,req.params.teamid], function(err, rows, fields) {
+connection.query("SELECT COUNT(*) as games from events JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.date < ? AND events.teamID = ? AND club_event_types.event_type <> 'training' AND events.annulation = 0", [req.params.date,req.params.teamid], function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
     res.send(JSON.stringify(rows));
