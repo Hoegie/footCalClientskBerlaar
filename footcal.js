@@ -175,7 +175,8 @@ app.post("/footcal/iosanulpush2",function(req,res){
                 
                 notification2.title = locTitle;
                 notification2.body = date + " " + teamName + " " + rows2[0].club_event_name;
-                notification2.aps.category = eventID;
+                notification2.aps.category = "anul";
+                notification2.aps.eventID = eventID;
 
                 apnProvider.send(notification2, row.token).then(function(result) { 
                 console.log(result);
