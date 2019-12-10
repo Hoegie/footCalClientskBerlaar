@@ -1,4 +1,4 @@
-//LIVE VERSION 7 (dayoverview) go live version  
+//LIVE VERSION 8 Dashboard adapted 
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
