@@ -4207,7 +4207,7 @@ app.post("/events/phpnew",function(req,res){
         comments: req.body.comments
     };
     console.log(post);
-    var connquery = "INSERT INTO events SET vvid = '" + post.vvid + "'' ,date = STR_TO_DATE('" + post.date + "','%d-%m-%Y  %H:%i'), teamID = '" + post.teamID + "', event_type = '" + post.event_type + "', match_type = '" + post.match_type + "', opponentID = '" + post.opponentID + "', locationID = '" + post.locationID + "', homelocationID = '" + post.homelocationID + "', comments = '" + post.comments + "'";
+    var connquery = "INSERT INTO events SET vvid = '" + post.vvid + "' ,date = STR_TO_DATE('" + post.date + "','%d-%m-%Y  %H:%i'), teamID = '" + post.teamID + "', event_type = '" + post.event_type + "', match_type = '" + post.match_type + "', opponentID = '" + post.opponentID + "', locationID = '" + post.locationID + "', homelocationID = '" + post.homelocationID + "', comments = '" + post.comments + "'";
     console.log(connquery);
 connection.query(connquery, post, function(err,result) {
 /*connection.end();*/
