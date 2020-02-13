@@ -4252,7 +4252,7 @@ app.post("/events/phpnewupdateevent",function(req,res){
     };
     console.log(post);
   //check if this vvid already exists
-  connection.query("SELECT event_ID WHERE vvid = ?",vvid, function(err, rows, fields) {
+  connection.query("SELECT event_ID FROM events WHERE vvid = ?",vvid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     
