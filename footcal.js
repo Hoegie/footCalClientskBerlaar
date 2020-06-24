@@ -35,7 +35,17 @@ var serveraddress = sourcefile.serveraddress;
 
 //set database connection parameters
 //*************************************************************************
-var connection = mysql.createConnection({
+var connection = mysql.createConnection({app.put("/accounts/clearfavorites/:id",function(req,res){
+connection.query("UPDATE accounts SET clear_favorites = 0, favorites = 'none' WHERE account_ID = ?",req.params.id, function(err,result) {
+/*connection.end();*/
+  if (!err){
+    console.log(result);
+    res.end(JSON.stringify(result));
+  }else{
+    console.log('Error while performing Query.');
+  }
+  });
+});
   host     : '127.0.0.1',
   user     : 'root',
   password : 'Hoegaarden',
@@ -2462,7 +2472,7 @@ connection.query('UPDATE accounts SET logged_in = 0, forced_logout = 0 WHERE acc
 });
 
 app.put("/accounts/clearfavorites/:id",function(req,res){
-connection.query('UPDATE accounts SET clear_favorites = 0 WHERE account_ID = ?',req.params.id, function(err,result) {
+connection.query("UPDATE accounts SET clear_favorites = 0, favorites = 'none' WHERE account_ID = ?",req.params.id, function(err,result) {
 /*connection.end();*/
   if (!err){
     console.log(result);
