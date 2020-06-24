@@ -2367,7 +2367,7 @@ connection.query('SELECT COUNT(*) as number from accounts', function(err, rows, 
 });
 
 app.get("/accounts/forcedlogout/:accountid",function(req,res){
-connection.query('SELECT forced_logout from accounts WHERE account_ID = ?', req.params.accountid, function(err, rows, fields) {
+connection.query('SELECT forced_logout, clear_favorites from accounts WHERE account_ID = ?', req.params.accountid, function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
