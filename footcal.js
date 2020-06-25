@@ -4723,7 +4723,7 @@ connection.query('UPDATE homelocations SET ? WHERE homelocation_ID = ? ', [put, 
 /*OPPONENTS*/
 
 app.get("/opponents/all",function(req,res){
-connection.query('SELECT opponent_ID, concat(prefix, " ", name) as fullName FROM opponents ORDER BY name ASC', function(err, rows, fields) {
+connection.query('SELECT opponent_ID, concat(prefix, " ", name) as fullName, name FROM opponents ORDER BY name ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
