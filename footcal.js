@@ -2733,7 +2733,7 @@ connection.query('SELECT team_ID, team_name, team_series, team_vvseriesID, team_
 
 
 app.get("/teams/php/all",function(req,res){
-connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling, team_order as Volgorde FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
+connection.query('SELECT team_ID, team_name as Ploeg, team_series as Reeks, team_division as Afdeling, CASE WHEN team_vvID = 0 THEN 2 ELSE autoupdate END as AutoUpdate, team_order as Volgorde FROM teams ORDER BY team_order ASC', function(err, rows, fields) {
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
