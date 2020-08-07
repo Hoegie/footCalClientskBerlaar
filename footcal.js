@@ -4652,15 +4652,24 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.b
 });
 
 app.post("/eventpresences/confirmall",function(req,res){
-connection.query('SELECT player_ID FROM players where players.teamID = ?', req.body.teamid, function(err, rows, fields) {
+connection.query("SELECT players.player_ID, COALESCE(event_presences.extra_player, '0') as extra_player FROM players LEFT JOIN event_presences ON event_presences.playerID = players.player_ID where players.teamID = ? and event_presences.eventID = ?", [req.body.teamid, req.body.eventid], function(err, rows, fields) {
   if (!err){
     console.log('The solution is: ', rows);
     //res.end(JSON.stringify(rows));
-    rows.forEach(function(row, i) {
-          var post = {
+    connection.query('SELECT playerID as player_ID, extra_player FROM event_presences WHERE eventID = ? and extra_player = ?', [req.body.eventid, req.body.teamid], function(err, rows2, fields) {
+      if (!err){
+
+         rows2.forEach(function(row2, i) {
+            rows.push(row2);
+         });
+         console.log('The solution is: ', rows);
+
+         rows.forEach(function(row, i) {
+         var post = {
                 eventID: req.body.eventid,
                 playerID: row.player_ID,
-                confirmed: 1
+                confirmed: 1,
+                extra_player: row.extra_player
           };
           connection.query('DELETE FROM event_presences WHERE eventID = ? AND playerID = ?', [post.eventID, post.playerID], function(err,result) {
           if (!err){
@@ -4676,7 +4685,14 @@ connection.query('SELECT player_ID FROM players where players.teamID = ?', req.b
             console.log('Error while performing Query2.');
           }
           });
+          }); 
+
+      }else{
+        console.log('Error while performing Query1,5.');
+      }
+
     });
+
     res.end(JSON.stringify({insertId: 1}));
   }else{
     console.log('Error while performing Query1.');
