@@ -152,21 +152,23 @@ app.post("/footcal/iosanulpush2",function(req,res){
   connection.query(connquery, function(err, rows, fields) {
     if (!err){
       res.end(JSON.stringify(rows));
-      console.log(rows)
+      //console.log(rows)
       rows.forEach(function(row, i) {
 
           var notification2 = new apn.Notification();
           notification2.topic = 'be.degronckel.FootCal';
           notification2.expiry = Math.floor(Date.now() / 1000) + 3600;
           notification2.sound = 'ping.aiff';
+          
 
           if (clubID != row.active_clubID){
             notification2.subtitle = "[" + clubName + "]";
           } 
 
-          console.log("active clubeID :" + row.active_clubID);
-          console.log(notification2.subtitle);  
-          
+          //console.log("active clubeID :" + row.active_clubID);
+          //console.log(notification2.subtitle);  
+          console.log(row);
+          console.log("device language : " +row.device_language);
           var locTitle = androidtranslator[row.device_language][title];
 
           var connquery2 = "SELECT club_event_types.club_event_name_" + row.device_language + " as club_event_name FROM events LEFT JOIN club_event_types ON club_event_types.club_event_type_ID = events.event_type WHERE events.event_ID = " + eventID;
