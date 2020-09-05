@@ -3343,7 +3343,8 @@ connection.query('SELECT players.player_ID, players.first_name, players.last_nam
 /*connection.end();*/
   if (!err){
     console.log('The solution is: ', rows);
-    res.end(JSON.stringify(rows));
+    //res.end(JSON.stringify(rows));
+    res.status(200).json(JSON.stringify(rows));
   }else{
     console.log('Error while performing Query.');
   }
