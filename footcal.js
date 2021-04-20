@@ -1,4 +1,4 @@
-//LIVE VERSION 8 Dashboard adapted 
+//LIVE VERSION 8 Dashboard adapted new version !!
 var express    = require('express');
 var mysql      = require('mysql');
 var bodyParser = require('body-parser');
